@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author tavandung12
  *
  */
-public abstract class EzyEntity implements EzyProperties {
+public class EzyEntity implements EzyProperties {
 
     // map of key/value properties of model
     protected final Map<Object, Object> properties
@@ -51,7 +51,20 @@ public abstract class EzyEntity implements EzyProperties {
     public <T> T getProperty(Object key, Class<T> clazz) {
         return (T)properties.get(key);
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see com.tvd12.ezyfoxserver.entities.EzyFoxProperties#getProperty(java.lang.Class)
+     */
+    @Override
+    public <T> T getProperty(Class<T> key) {
+        if(properties.containsKey(key)) {
+            T answer = (T)properties.get(key);
+            return answer;
+        }
+        return null;
+    }
+
     /**
      * removes the mapping for a key from the map
      * @see java.util.Map#remove(Object)
@@ -72,7 +85,7 @@ public abstract class EzyEntity implements EzyProperties {
     public boolean containsKey(Object key) {
     	return properties.containsKey(key);
     }
-    
+
     @Override
     public Properties getProperties() {
     	Properties prop = new Properties();
