@@ -6,10 +6,11 @@ import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
  * Created by tavandung12 on 9/30/18.
  */
 
-public enum  EzyEventType implements EzyConstant {
+public enum EzyEventType implements EzyConstant {
 
     CONNECTION_SUCCESS(1),
-    CONNECTION_FAILURE(2);
+    CONNECTION_FAILURE(2),
+    DISCONNECTION(3);
 
     private final int id;
 

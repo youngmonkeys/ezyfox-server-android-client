@@ -6,14 +6,8 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 public abstract class EzyAbstractSocketClient implements EzySocketClient {
 
-    @Override
-    public void reconnect() throws Exception {
-        disconnect();
-        resetComponents();
-        connect0();
-    }
+    protected abstract boolean connect0();
 
-    protected abstract void connect0();
     protected abstract void resetComponents();
 
 }

@@ -8,10 +8,10 @@ public interface EzySocketClient extends EzySender {
 
     void connect(String host, int port) throws Exception;
 
-    void reconnect() throws Exception;
+    void connect();
+
+    boolean reconnect();
 
     void disconnect();
-
-    void close();
 
 }

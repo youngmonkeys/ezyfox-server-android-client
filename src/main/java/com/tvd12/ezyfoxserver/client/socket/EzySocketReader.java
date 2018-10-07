@@ -2,6 +2,7 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 import android.util.Log;
 
+import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.constant.EzySocketConstants;
 
 import java.nio.ByteBuffer;
@@ -40,6 +41,7 @@ public class EzySocketReader
 		if(!socketChannel.isConnected()) {
 			return;
 		}
+		this.buffer.clear();
 		long readBytes = socketChannel.read(buffer);
 		if(readBytes == -1L) {
 			closeConnection();
@@ -58,6 +60,7 @@ public class EzySocketReader
 	
 	private void closeConnection() throws Exception {
 		socketChannel.close();
+		socketDataHandler.fireSocketDisconnected(EzyDisconnectReason.UNKNOWN);
 	}
 
 	public void setSocketChannel(SocketChannel socketChannel) {

@@ -24,6 +24,8 @@ public class EzySocketWriter extends EzyAbstractSocketEventHandler {
             dataHandler.firePacketSend(packet, writeBuffer);
             if(packet.isReleased())
                 packetQueue.take();
+            else
+            	packetQueue.wakeup();
 		}
 		catch (InterruptedException e) {
 			Log.w("ezyfox-client","socket-writer thread interrupted: " + Thread.currentThread());

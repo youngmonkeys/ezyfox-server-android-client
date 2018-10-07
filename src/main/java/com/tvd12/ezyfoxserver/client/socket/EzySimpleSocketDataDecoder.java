@@ -81,8 +81,10 @@ public class EzySimpleSocketDataDecoder implements EzySocketDataDecoder {
 
 	@Override
 	public void reset() {
-		buffer.clear();
 		queue.clear();
 		decoder.reset();
+		if(buffer != null)
+			buffer.clear();
+		buffer = null;
 	}
 }

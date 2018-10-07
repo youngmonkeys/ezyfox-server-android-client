@@ -1,6 +1,6 @@
 package com.tvd12.ezyfoxserver.client.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +13,10 @@ public final class Lists {
     }
 
     public static <T> List<T> newArrayList(T... items) {
-        return Arrays.asList(items);
+        List<T> list = new ArrayList<>();
+        for(T item : items)
+            list.add(item);
+        return list;
     }
 
 }

@@ -1,61 +1,46 @@
 package com.tvd12.ezyfoxserver.client;
 
-import android.util.Log;
+import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
+import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
+import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
+import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
+import com.tvd12.ezyfoxserver.client.manager.EzyAppByIdGroup;
+import com.tvd12.ezyfoxserver.client.manager.EzyZoneGroup;
+import com.tvd12.ezyfoxserver.client.socket.EzySender;
 
-import com.tvd12.ezyfoxserver.client.command.EzySetup;
-import com.tvd12.ezyfoxserver.client.command.EzySimpleSetup;
-import com.tvd12.ezyfoxserver.client.entity.EzyEntity;
-import com.tvd12.ezyfoxserver.client.handler.EzyDataHandlers;
-import com.tvd12.ezyfoxserver.client.handler.EzyEventHandlers;
-import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
-import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
+import java.util.Map;
 
 /**
  * Created by tavandung12 on 9/20/18.
  */
 
-public class EzyClient extends EzyEntity {
+public interface EzyClient
+        extends EzySender, EzyZoneGroup, EzyAppByIdGroup {
 
-    private final EzyEventHandlers eventHandlers;
-    private final EzyDataHandlers dataHandlers;
-    private final EzySocketClient socketClient;
+    Object DEFAULT_CLIENT_NAME = "___ezyfox_client___";
 
-    public EzyClient() {
-        this.eventHandlers = newEventHandlers();
-        this.dataHandlers = newDataHandlers();
-        this.socketClient = newSocketClient();
-        this.initProperties();
-    }
+    void connect(String host, int port);
 
-    private void initProperties() {
-        this.properties.put(EzySetup.class, new EzySimpleSetup(eventHandlers, dataHandlers));
-    }
+    void connect();
 
-    private EzyEventHandlers newEventHandlers() {
-        EzyEventHandlers handlers = new EzyEventHandlers();
-        return handlers;
-    }
+    boolean reconnect();
 
-    private EzyDataHandlers newDataHandlers() {
-        EzyDataHandlers handlers = new EzyDataHandlers();
-        return handlers;
-    }
+    Object getName();
 
-    private EzySocketClient newSocketClient() {
-        EzyTcpSocketClient client = new EzyTcpSocketClient(eventHandlers, dataHandlers);
-        return client;
-    }
+    <T> T get(Class<T> key);
 
-    public void connect(String host, int port) {
-        try {
-            socketClient.connect(host, port);
-        } catch (Exception e) {
-            Log.e("ezyfox-client", "connect to server error", e);
-        }
-    }
+    void setLostPingCount(int count);
 
-    public <T> T get(Class<T> key) {
-        return getProperty(key);
-    }
+    int increaseLostPingCount();
+
+    int getMaxLostPingCount();
+
+    EzyConstant getConnectionStatus();
+
+    EzyDataHandler getDataHandler(Object cmd);
+
+    EzyEventHandler getEventHandler(EzyConstant eventType);
+
+    Map<String, EzyAppDataHandlers> getAppDataHandlerss(String zoneName);
 
 }

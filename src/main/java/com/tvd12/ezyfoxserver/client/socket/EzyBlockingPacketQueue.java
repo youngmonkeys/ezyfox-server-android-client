@@ -90,4 +90,9 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 			return success;
 		}
 	}
+
+	@Override
+	public void wakeup() {
+		this.processing = false;
+	}
 }

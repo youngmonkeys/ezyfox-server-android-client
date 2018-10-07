@@ -5,7 +5,9 @@ import android.util.Log;
 import com.tvd12.ezyfoxserver.client.callback.EzyCallback;
 import com.tvd12.ezyfoxserver.client.codec.EzyMessage;
 import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
+import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
+import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
 import java.nio.ByteBuffer;
@@ -18,18 +20,20 @@ import java.util.concurrent.ExecutorService;
 
 public class EzySocketDataHandler implements EzyResettable {
 
+    protected SocketChannel socketChannel;
+    protected volatile boolean disconnected;
     protected final EzySocketDataDecoder decoder;
     protected final ExecutorService codecThreadPool;
     protected final EzySocketEventQueue eventQueue;
     protected final EzyCallback<EzyMessage> decodeBytesCallback;
-    protected final SocketChannel socketChannel;
+    protected final EzyDisconnectionDelegate disconnectionDelegate;
 
     public EzySocketDataHandler(EzySocketDataDecoder decoder,
                                 EzySocketEventQueue eventQueue,
-                                SocketChannel socketChannel) {
+                                EzyDisconnectionDelegate disconnectionDelegate) {
         this.decoder = decoder;
         this.eventQueue = eventQueue;
-        this.socketChannel = socketChannel;
+        this.disconnectionDelegate = disconnectionDelegate;
         this.codecThreadPool = EzyExecutors.newSingleThreadExecutor("codec");
         this.decodeBytesCallback = new EzyCallback<EzyMessage>() {
             @Override
@@ -37,6 +41,10 @@ public class EzySocketDataHandler implements EzyResettable {
                 executeHandleReceivedMessage(message);
             }
         };
+    }
+
+    public void setSocketChannel(SocketChannel socketChannel) {
+        this.socketChannel = socketChannel;
     }
 
     public void fireBytesReceived(byte[] bytes) throws Exception {
@@ -48,8 +56,17 @@ public class EzySocketDataHandler implements EzyResettable {
         }
     }
 
-    private void fireExceptionCaught(Exception e) {
+    public void fireSocketDisconnected(EzyConstant reason) {
+        if(disconnected) return;
+        disconnected = true;
+        disconnectionDelegate.onDisconnected(reason);
+        EzySocketEvent event = new EzySimpleSocketEvent(
+                EzySocketEventType.EVENT,
+                new EzyDisconnectionEvent(reason));
+        eventQueue.add(event);
+    }
 
+    private void fireExceptionCaught(Exception e) {
     }
 
     private void executeHandleReceivedMessage(final EzyMessage message) {
@@ -93,13 +110,14 @@ public class EzySocketDataHandler implements EzyResettable {
         boolean canWriteBytes = canWriteBytes();
         if(canWriteBytes)
             writePacketToSocket(packet, writeBuffer);
+        else
+            packet.release();
     }
 
     private boolean canWriteBytes() {
         if(socketChannel == null)
             return false;
-        boolean connected = socketChannel.isConnected();
-        return connected;
+        return socketChannel.isConnected();
     }
 
     protected int writePacketToSocket(EzyPacket packet, Object writeBuffer) throws Exception {

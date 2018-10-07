@@ -31,6 +31,10 @@ public class EzyConnectionFailureEvent implements EzyEvent {
         return new EzyConnectionFailureEvent(EzyConnectionFailedReason.UNKNOWN);
     }
 
+    public EzyConstant getReason() {
+        return reason;
+    }
+
     @Override
     public EzyEventType getType() {
         return EzyEventType.CONNECTION_FAILURE;
