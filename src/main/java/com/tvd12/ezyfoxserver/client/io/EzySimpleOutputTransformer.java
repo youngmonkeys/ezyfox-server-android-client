@@ -315,7 +315,7 @@ public class EzySimpleOutputTransformer
 				try {
 					return EzyDates.parse(value);
 				} catch (Exception e) {
-					Log.w("value = " + value + " is invalid", e);
+					Log.w("ezyfox-client", "value = " + value + " is invalid", e);
 				}
 				return null;
 			}
@@ -328,7 +328,7 @@ public class EzySimpleOutputTransformer
 				try {
 					return EzyClasses.getClass(value);
 				} catch (Exception e) {
-					Log.w("value = " + value + " is invalid", e);
+					Log.w("ezyfox-client","value = " + value + " is invalid", e);
 				}
 				return null;
 			}
