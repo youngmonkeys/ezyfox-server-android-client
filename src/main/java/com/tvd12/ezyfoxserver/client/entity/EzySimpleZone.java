@@ -28,7 +28,7 @@ public class EzySimpleZone implements EzyZone, EzyMeAware {
         this.name = name;
         this.me = me;
         this.client = client;
-        this.appDataHandlerss = client.getAppDataHandlerss(name);
+        this.appDataHandlerss = client.getHandlerManager().getAppDataHandlerss(name);
     }
 
     @Override

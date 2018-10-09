@@ -8,6 +8,7 @@ import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
+import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
 import java.nio.ByteBuffer;
@@ -43,6 +44,10 @@ public class EzySocketDataHandler implements EzyResettable {
         };
     }
 
+    public void setDisconnected(boolean disconnected) {
+        this.disconnected = disconnected;
+    }
+
     public void setSocketChannel(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
     }
@@ -57,13 +62,14 @@ public class EzySocketDataHandler implements EzyResettable {
     }
 
     public void fireSocketDisconnected(EzyConstant reason) {
-        if(disconnected) return;
+        if(disconnected)
+            return;
         disconnected = true;
         disconnectionDelegate.onDisconnected(reason);
-        EzySocketEvent event = new EzySimpleSocketEvent(
-                EzySocketEventType.EVENT,
-                new EzyDisconnectionEvent(reason));
-        eventQueue.add(event);
+        EzyEvent event = new EzyDisconnectionEvent(reason);
+        EzySocketEvent socketEvent = new EzySimpleSocketEvent(
+                EzySocketEventType.EVENT, event);
+        eventQueue.add(socketEvent);
     }
 
     private void fireExceptionCaught(Exception e) {

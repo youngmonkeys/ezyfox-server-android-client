@@ -3,9 +3,8 @@ package com.tvd12.ezyfoxserver.client.command;
 import com.tvd12.ezyfoxserver.client.event.EzyEventType;
 import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
-import com.tvd12.ezyfoxserver.client.handler.EzyDataHandlers;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
-import com.tvd12.ezyfoxserver.client.handler.EzyEventHandlers;
+import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,29 +15,23 @@ import java.util.Map;
 
 public class EzySimpleSetup implements EzySetup {
 
-    private final EzyEventHandlers eventHandlers;
-    private final EzyDataHandlers dataHandlers;
+    private final EzyHandlerManager handlerManager;
     private final Map<String, EzyZoneSetup> zoneSetups;
-    private final Map<String, Map<String, EzyAppDataHandlers>> zoneAppDataHandlerss;
 
-    public EzySimpleSetup(EzyEventHandlers eventHandlers,
-                          EzyDataHandlers dataHandlers,
-                          Map<String, Map<String, EzyAppDataHandlers>> zoneAppDataHandlerss) {
-        this.eventHandlers = eventHandlers;
-        this.dataHandlers = dataHandlers;
+    public EzySimpleSetup(EzyHandlerManager handlerManager) {
+        this.handlerManager = handlerManager;
         this.zoneSetups = new HashMap<>();
-        this.zoneAppDataHandlerss = zoneAppDataHandlerss;
     }
 
     @Override
     public EzySetup addDataHandler(Object cmd, EzyDataHandler dataHandler) {
-        dataHandlers.addHandler(cmd, dataHandler);
+        handlerManager.addDataHandler(cmd, dataHandler);
         return this;
     }
 
     @Override
     public EzySetup addEventHandler(EzyEventType eventType, EzyEventHandler eventHandler) {
-        eventHandlers.addHandler(eventType, eventHandler);
+        handlerManager.addEventHandler(eventType, eventHandler);
         return this;
     }
 
@@ -46,11 +39,7 @@ public class EzySimpleSetup implements EzySetup {
     public EzyZoneSetup setupZone(String zoneName) {
         EzyZoneSetup zoneSetup = zoneSetups.get(zoneName);
         if(zoneSetup == null) {
-            Map<String, EzyAppDataHandlers> appDataHandlerss = zoneAppDataHandlerss.get(zoneName);
-            if(appDataHandlerss == null) {
-                appDataHandlerss = new HashMap<>();
-                zoneAppDataHandlerss.put(zoneName, appDataHandlerss);
-            }
+            Map<String, EzyAppDataHandlers> appDataHandlerss = handlerManager.getDataHandlers(zoneName);
             zoneSetup = new EzySimpleZoneSetup(appDataHandlerss, this);
         }
         return zoneSetup;

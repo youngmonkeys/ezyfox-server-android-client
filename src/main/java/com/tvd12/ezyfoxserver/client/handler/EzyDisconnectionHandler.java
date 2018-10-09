@@ -30,6 +30,6 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
     }
 
     private void setSatus() {
-        ((EzyConnectionStatusAware)client).setConnectionStatus(EzyConnectionStatus.DISCONNECTED);
+        ((EzyConnectionStatusAware)client).setStatus(EzyConnectionStatus.DISCONNECTED);
     }
 }

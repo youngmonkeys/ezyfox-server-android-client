@@ -15,8 +15,8 @@ import com.tvd12.ezyfoxserver.client.event.EzyConnectionFailureEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionSuccessEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
-import com.tvd12.ezyfoxserver.client.handler.EzyDataHandlers;
-import com.tvd12.ezyfoxserver.client.handler.EzyEventHandlers;
+import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
+import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
 
 import java.io.IOException;
@@ -42,8 +42,7 @@ public class EzyTcpSocketClient
     protected EzySocketThread socketThread;
     protected final Handler uihandler;
     protected final EzyReconnectConfig reconnectConfig;
-    protected final EzyDataHandlers dataHandlers;
-    protected final EzyEventHandlers eventHandlers;
+    protected final EzyHandlerManager handlerManager;
     protected final Set<Object> unloggableCommands;
     protected final EzyCodecFactory codecFactory;
     protected final EzyPacketQueue packetQueue;
@@ -51,6 +50,7 @@ public class EzyTcpSocketClient
     protected final EzyResponseApi responseApi;
     protected final EzySocketDataHandler dataHandler;
     protected final EzyPingSchedule pingSchedule;
+    protected final EzyPingManager pingManager;
     protected final EzySocketReader socketReader;
     protected final EzySocketWriter socketWriter;
     protected final EzySocketDataEventHandler socketDataEventHandler;
@@ -58,13 +58,13 @@ public class EzyTcpSocketClient
     protected final EzySocketWritingLoopHandler socketWritingLoopHandler;
 
     public EzyTcpSocketClient(EzyReconnectConfig reconnectConfig,
-                              EzyEventHandlers eventHandlers,
-                              EzyDataHandlers dataHandlers,
+                              EzyHandlerManager handlerManager,
+                              EzyPingManager pingManager,
                               EzyPingSchedule pingSchedule,
                               Set<Object> unloggableCommands) {
         this.reconnectConfig = reconnectConfig;
-        this.eventHandlers = eventHandlers;
-        this.dataHandlers = dataHandlers;
+        this.handlerManager = handlerManager;
+        this.pingManager = pingManager;
         this.pingSchedule = pingSchedule;
         this.unloggableCommands = unloggableCommands;
         this.uihandler = new Handler();
@@ -79,6 +79,17 @@ public class EzyTcpSocketClient
         this.socketReadingLoopHandler = newSocketReadingLoopHandler();
         this.socketWritingLoopHandler = newSocketWritingLoopHandler();
         this.pingSchedule.setDataHandler(dataHandler);
+        this.startComponents();
+    }
+
+    private void startComponents() {
+        try {
+            this.socketReadingLoopHandler.start();
+            this.socketWritingLoopHandler.start();
+        }
+        catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private EzyResponseApi newResponseApi() {
@@ -98,8 +109,9 @@ public class EzyTcpSocketClient
         return new EzySocketDataEventHandler(
                 uihandler,
                 dataHandler,
-                eventHandlers,
-                dataHandlers, eventQueue, unloggableCommands);
+                pingManager,
+                handlerManager,
+                eventQueue, unloggableCommands);
     }
 
     private EzySocketReadingLoopHandler newSocketReadingLoopHandler() {
@@ -116,21 +128,14 @@ public class EzyTcpSocketClient
 
     @Override
     public void connect(String host, int port) throws Exception {
-        reconnectCount = 0;
         socketAddress = new InetSocketAddress(host, port);
-        socketReadingLoopHandler.start();
-        socketWritingLoopHandler.start();
-        socketThread = new EzySocketThread();
-        socketThread.start();
+        connect();
     }
 
     @Override
     public void connect() {
         reconnectCount = 0;
-        socketThread.cancel();
-        resetComponents();
-        socketThread = new EzySocketThread();
-        socketThread.start();
+        handleConnection(0);
     }
 
     @Override
@@ -138,14 +143,20 @@ public class EzyTcpSocketClient
         int maxReconnectCount = reconnectConfig.getMaxReconnectCount();
         if(reconnectCount >= maxReconnectCount)
             return false;
-        socketThread.cancel();
-        resetComponents();
         long reconnectSleepTime = getReconnectSleepTime();
-        socketThread = new EzySocketThread(reconnectSleepTime);
-        socketThread.start();
+        handleConnection(reconnectSleepTime);
         reconnectCount++;
         Log.i("ezyfox-client", "try reconnect to server: " + reconnectCount + ", wating time: " + reconnectSleepTime);
         return true;
+    }
+
+    private void handleConnection(long sleepTime) {
+        if(socketThread != null)
+            socketThread.cancel();
+        disconnect();
+        resetComponents();
+        socketThread = new EzySocketThread();
+        socketThread.start();
     }
 
     @Override
@@ -160,6 +171,7 @@ public class EzyTcpSocketClient
             socketChannel.configureBlocking(false);
             socketReader.setSocketChannel(socketChannel);
             dataHandler.setSocketChannel(socketChannel);
+            dataHandler.setDisconnected(true);
             event = new EzyConnectionSuccessEvent();
             success = true;
             reconnectCount = 0;
@@ -213,6 +225,9 @@ public class EzyTcpSocketClient
     public void disconnect() {
         if(socketChannel != null)
             disconnect0();
+        socketChannel = null;
+        handleDisconnected();
+        dataHandler.setDisconnected(true);
     }
 
     private void disconnect0() {
@@ -225,6 +240,10 @@ public class EzyTcpSocketClient
 
     @Override
     public void onDisconnected(EzyConstant reason) {
+        handleDisconnected();
+    }
+
+    private void handleDisconnected() {
         packetQueue.clear();
         eventQueue.clear();
         pingSchedule.stop();
@@ -287,7 +306,8 @@ public class EzyTcpSocketClient
         }
 
         public void cancel() {
-            socketDataEventHandlingLoop.setActive(false);
+            if(socketDataEventHandlingLoop != null)
+                socketDataEventHandlingLoop.setActive(false);
         }
     }
 }

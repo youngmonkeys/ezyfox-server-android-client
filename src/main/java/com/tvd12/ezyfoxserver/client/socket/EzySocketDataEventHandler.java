@@ -10,9 +10,9 @@ import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEventType;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
-import com.tvd12.ezyfoxserver.client.handler.EzyDataHandlers;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
-import com.tvd12.ezyfoxserver.client.handler.EzyEventHandlers;
+import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
+import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 
 import java.util.Set;
 
@@ -24,21 +24,21 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
 
     private final Handler uihandler;
     private final EzySocketDataHandler dataHandler;
-    private final EzyEventHandlers eventHandlers;
-    private final EzyDataHandlers dataHandlers;
+    private final EzyPingManager pingManager;
+    private final EzyHandlerManager handlerManager;
     private final EzySocketEventQueue socketEventQueue;
     private final Set<Object> unloggableCommands;
 
     public EzySocketDataEventHandler(Handler uihandler,
                                      EzySocketDataHandler dataHandler,
-                                     EzyEventHandlers eventHandlers,
-                                     EzyDataHandlers dataHandlers,
+                                     EzyPingManager pingManager,
+                                     EzyHandlerManager handlerManager,
                                      EzySocketEventQueue socketEventQueue,
                                      Set<Object> unloggableCommands) {
         this.uihandler = uihandler;
         this.dataHandler = dataHandler;
-        this.eventHandlers = eventHandlers;
-        this.dataHandlers = dataHandlers;
+        this.pingManager = pingManager;
+        this.handlerManager = handlerManager;
         this.socketEventQueue = socketEventQueue;
         this.unloggableCommands = unloggableCommands;
     }
@@ -60,7 +60,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
 
     private void processEvent(final EzyEvent event) {
         EzyEventType eventType = event.getType();
-        final EzyEventHandler handler = eventHandlers.getHandler(eventType);
+        final EzyEventHandler handler = handlerManager.getEventHandler(eventType);
         if(handler != null) {
             Log.i("ezyfox-client", "process event: " + eventType + " with handler: " + handler);
             uihandler.post(new Runnable() {
@@ -76,9 +76,10 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
     }
 
     private void processResponse(EzyResponse response) {
+        pingManager.setLostPingCount(0);
         EzyConstant cmd = response.getCommand();
         EzyArray data = response.getData();
-        final EzyArray responseData = data.getWithDefault(1, null);
+        EzyArray responseData = data.getWithDefault(1, null);
         if(!unloggableCommands.contains(cmd))
             Log.d("ezyfox-client", "received command: " + cmd + " and data: " + responseData);
         if(cmd == EzyCommand.DISCONNECT)
@@ -94,7 +95,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
     }
 
     private void handleOtherCommand(final Object cmd, final EzyArray responseData) {
-        final EzyDataHandler handler = dataHandlers.getHandler(cmd);
+        final EzyDataHandler handler = handlerManager.getDataHandler(cmd);
         if (handler != null) {
             uihandler.post(new Runnable() {
                 @Override

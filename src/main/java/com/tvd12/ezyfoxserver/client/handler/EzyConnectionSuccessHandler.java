@@ -21,7 +21,7 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
     }
 
     private void updateConnectionStatus() {
-        ((EzyConnectionStatusAware)client).setConnectionStatus(EzyConnectionStatus.CONNECTED);
+        ((EzyConnectionStatusAware)client).setStatus(EzyConnectionStatus.CONNECTED);
     }
 
     protected void postHandle() {

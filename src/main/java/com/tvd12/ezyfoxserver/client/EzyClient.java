@@ -1,21 +1,21 @@
 package com.tvd12.ezyfoxserver.client;
 
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
-import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
-import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
-import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
 import com.tvd12.ezyfoxserver.client.manager.EzyAppByIdGroup;
+import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
+import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyZoneGroup;
 import com.tvd12.ezyfoxserver.client.socket.EzySender;
-
-import java.util.Map;
+import com.tvd12.ezyfoxserver.client.util.EzyInstanceFetcher;
 
 /**
  * Created by tavandung12 on 9/20/18.
  */
 
-public interface EzyClient
-        extends EzySender, EzyZoneGroup, EzyAppByIdGroup {
+public interface EzyClient extends
+        EzySender,
+        EzyZoneGroup,
+        EzyAppByIdGroup, EzyInstanceFetcher {
 
     Object DEFAULT_CLIENT_NAME = "___ezyfox_client___";
 
@@ -25,22 +25,14 @@ public interface EzyClient
 
     boolean reconnect();
 
+    void disconnect();
+
     Object getName();
 
-    <T> T get(Class<T> key);
+    EzyConstant getStatus();
 
-    void setLostPingCount(int count);
+    EzyPingManager getPingManager();
 
-    int increaseLostPingCount();
-
-    int getMaxLostPingCount();
-
-    EzyConstant getConnectionStatus();
-
-    EzyDataHandler getDataHandler(Object cmd);
-
-    EzyEventHandler getEventHandler(EzyConstant eventType);
-
-    Map<String, EzyAppDataHandlers> getAppDataHandlerss(String zoneName);
+    EzyHandlerManager getHandlerManager();
 
 }

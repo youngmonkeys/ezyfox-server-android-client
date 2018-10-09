@@ -26,6 +26,6 @@ public class EzyConnectionFailureHandler extends EzyAbstractEventHandler<EzyConn
     }
 
     private void setSatus() {
-        ((EzyConnectionStatusAware)client).setConnectionStatus(EzyConnectionStatus.FAILURE);
+        ((EzyConnectionStatusAware)client).setStatus(EzyConnectionStatus.FAILURE);
     }
 }

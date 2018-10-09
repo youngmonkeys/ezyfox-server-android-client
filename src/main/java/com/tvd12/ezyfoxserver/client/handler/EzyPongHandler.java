@@ -10,6 +10,5 @@ public class EzyPongHandler extends EzyAbstractDataHandler {
 
     @Override
     public void handle(EzyArray data) {
-        client.setLostPingCount(0);
     }
 }

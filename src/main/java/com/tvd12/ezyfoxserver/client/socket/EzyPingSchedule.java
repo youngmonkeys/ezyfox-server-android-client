@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.EzyClient;
 import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
+import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyPingRequest;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
 
@@ -16,6 +17,7 @@ public class EzyPingSchedule {
     private Thread thread;
     private EzySocketDataHandler dataHandler;
     private final EzyClient client;
+    private final EzyPingManager pingManager;
     private final long periodMillis;
     private volatile boolean active = true;
 
@@ -26,6 +28,7 @@ public class EzyPingSchedule {
     public EzyPingSchedule(int period, EzyClient client) {
         this.client = client;
         this.periodMillis = period * 1000;
+        this.pingManager = client.getPingManager();
     }
 
     public void start() {
@@ -55,8 +58,8 @@ public class EzyPingSchedule {
     }
 
     private void sendPingRequest() {
-        int lostPingCount = client.increaseLostPingCount();
-        int maxLostPingCount = client.getMaxLostPingCount();
+        int lostPingCount = pingManager.increaseLostPingCount();
+        int maxLostPingCount = pingManager.getMaxLostPingCount();
         if(lostPingCount >= maxLostPingCount) {
             dataHandler.fireSocketDisconnected(EzyDisconnectReason.SERVER_NOT_RESPONDING);
         }

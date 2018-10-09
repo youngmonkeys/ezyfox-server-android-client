@@ -8,6 +8,6 @@ import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 
 public interface EzyConnectionStatusAware {
 
-    void setConnectionStatus(EzyConstant status);
+    void setStatus(EzyConstant status);
 
 }
