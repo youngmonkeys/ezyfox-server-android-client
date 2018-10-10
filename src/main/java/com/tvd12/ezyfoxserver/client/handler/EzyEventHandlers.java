@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class EzyEventHandlers extends EzyAbstractHandlers {
 
-    private final Map<EzyConstant, EzyEventHandler> handlers;;
+    private final Map<EzyConstant, EzyEventHandler> handlers;
 
     public EzyEventHandlers(EzyClient client, EzyPingSchedule pingSchedule) {
         super(client, pingSchedule);

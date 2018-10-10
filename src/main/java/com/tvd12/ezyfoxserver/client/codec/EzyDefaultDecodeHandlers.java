@@ -11,9 +11,9 @@ import static com.tvd12.ezyfoxserver.client.codec.EzyDecodeState.READ_MESSAGE_SI
  * Created by tavandung12 on 9/27/18.
  */
 
-public class Handlers extends EzyDecodeHandlers {
+public class EzyDefaultDecodeHandlers extends EzyDecodeHandlers {
 
-    protected Handlers(Builder builder) {
+    protected EzyDefaultDecodeHandlers(Builder builder) {
         super(builder);
     }
 
@@ -30,8 +30,8 @@ public class Handlers extends EzyDecodeHandlers {
             return this;
         }
 
-        public Handlers build() {
-            return new Handlers(this);
+        public EzyDefaultDecodeHandlers build() {
+            return new EzyDefaultDecodeHandlers(this);
         }
 
         @Override
@@ -53,10 +53,10 @@ public class Handlers extends EzyDecodeHandlers {
         }
 
         private EzyDecodeHandler newHandler(EzyDecodeHandler handler, EzyDecodeHandler next) {
-            return newHandler((AbstractHandler)handler, next);
+            return newHandler((AbstractDecodeHandler)handler, next);
         }
 
-        private EzyDecodeHandler newHandler(AbstractHandler handler, EzyDecodeHandler next) {
+        private EzyDecodeHandler newHandler(AbstractDecodeHandler handler, EzyDecodeHandler next) {
             handler.setNextHandler(next);
             handler.setMessageReader(messageReader);
             return handler;

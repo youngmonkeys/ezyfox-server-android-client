@@ -12,7 +12,8 @@ public class EzySimpleSocketDataEncoder implements EzySocketDataEncoder {
 	
 	@Override
 	public byte[] encode(Object data) throws Exception {
-		return encoder.encode(data);
+		byte[] bytes = encoder.encode(data);
+		return bytes;
 	}
 
 }

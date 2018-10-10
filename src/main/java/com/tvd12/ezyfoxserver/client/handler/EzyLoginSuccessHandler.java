@@ -23,7 +23,7 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         EzyUser user = newUser(data);
         EzyZone zone = newZone(data);
         ((EzyMeAware)zone).setMe(user);
-        client.addZone(zone);
+        zoneManager.addZone(zone);
         handleResponseAppDatas(zone.getId(), joinedApps);
         handleResponseData(responseData);
         if(joinedApps.isEmpty())

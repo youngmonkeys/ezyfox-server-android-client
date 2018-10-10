@@ -11,9 +11,10 @@ import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyApp;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.entity.EzyEntity;
-import com.tvd12.ezyfoxserver.client.entity.EzyZone;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
+import com.tvd12.ezyfoxserver.client.manager.EzySimpleHandlerManager;
+import com.tvd12.ezyfoxserver.client.manager.EzySimplePingManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimpleZoneManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyZoneManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
@@ -23,7 +24,6 @@ import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,7 +64,7 @@ public class EzyTcpClient
         this.statusLock = new Object();
         this.unloggableCommands = newUnloggableCommands();
         this.zoneManager = new EzySimpleZoneManager();
-        this.pingManager = new EzyPingManager();
+        this.pingManager = new EzySimplePingManager();
         this.appsById = new HashMap<>();
         this.pingSchedule = new EzyPingSchedule(this);
         this.handlerManager = newHandlerManager();
@@ -77,7 +77,7 @@ public class EzyTcpClient
     }
 
     private EzyHandlerManager newHandlerManager() {
-        return new EzyHandlerManager(this, pingSchedule);
+        return new EzySimpleHandlerManager(this, pingSchedule);
     }
 
     private Set<Object> newUnloggableCommands() {
@@ -130,6 +130,7 @@ public class EzyTcpClient
     @Override
     public void disconnect() {
         socketClient.disconnect();
+        setStatus(EzyConnectionStatus.DISCONNECTED);
     }
 
     @Override
@@ -167,16 +168,6 @@ public class EzyTcpClient
     }
 
     @Override
-    public void addZone(EzyZone zone) {
-        zoneManager.addZone(zone);
-    }
-
-    @Override
-    public EzyZone getZoneById(int zoneId) {
-        return zoneManager.getZoneById(zoneId);
-    }
-
-    @Override
     public void addApp(EzyApp app) {
         appsById.put(app.getId(), app);
     }
@@ -189,18 +180,8 @@ public class EzyTcpClient
     }
 
     @Override
-    public EzyZone getZoneByName(String zoneName) {
-        return zoneManager.getZoneByName(zoneName);
-    }
-
-    @Override
-    public EzyZone getZone() {
-        return zoneManager.getZone();
-    }
-
-    @Override
-    public List<EzyZone> getZoneList() {
-        return zoneManager.getZoneList();
+    public EzyZoneManager getZoneManager() {
+        return zoneManager;
     }
 
     @Override

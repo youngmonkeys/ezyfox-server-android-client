@@ -18,16 +18,10 @@ public class EzyPingSchedule {
     private EzySocketDataHandler dataHandler;
     private final EzyClient client;
     private final EzyPingManager pingManager;
-    private final long periodMillis;
     private volatile boolean active = true;
 
     public EzyPingSchedule(EzyClient client) {
-        this(5, client);
-    }
-
-    public EzyPingSchedule(int period, EzyClient client) {
         this.client = client;
-        this.periodMillis = period * 1000;
         this.pingManager = client.getPingManager();
     }
 
@@ -50,6 +44,7 @@ public class EzyPingSchedule {
 
     private void handle() {
         try {
+            long periodMillis = pingManager.getPingPeriod();
             Thread.sleep(periodMillis);
             sendPingRequest();
         } catch (InterruptedException e) {

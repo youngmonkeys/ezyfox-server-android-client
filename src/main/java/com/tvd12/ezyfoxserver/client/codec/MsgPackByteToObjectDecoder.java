@@ -8,7 +8,7 @@ import static com.tvd12.ezyfoxserver.client.codec.EzyDecodeState.READ_MESSAGE_CO
 import static com.tvd12.ezyfoxserver.client.codec.EzyDecodeState.READ_MESSAGE_HEADER;
 import static com.tvd12.ezyfoxserver.client.codec.EzyDecodeState.READ_MESSAGE_SIZE;
 
-abstract class AbstractHandler implements EzyDecodeHandler {
+abstract class AbstractDecodeHandler implements EzyDecodeHandler {
 
 	protected EzyDecodeHandler nextHandler;
 	protected EzyByteBufferMessageReader messageReader;
@@ -27,7 +27,7 @@ abstract class AbstractHandler implements EzyDecodeHandler {
 	}
 }
 
-class PrepareMessage extends AbstractHandler {
+class PrepareMessage extends AbstractDecodeHandler {
 	
 	@Override
 	public EzyIDecodeState nextState() {
@@ -41,7 +41,7 @@ class PrepareMessage extends AbstractHandler {
 	}
 }
 
-class ReadMessageHeader extends AbstractHandler {
+class ReadMessageHeader extends AbstractDecodeHandler {
 
 	@Override
 	public EzyIDecodeState nextState() {
@@ -55,7 +55,7 @@ class ReadMessageHeader extends AbstractHandler {
 	
 }
 
-class ReadMessageSize extends AbstractHandler {
+class ReadMessageSize extends AbstractDecodeHandler {
 
 	protected final int maxSize;
 	
@@ -74,7 +74,7 @@ class ReadMessageSize extends AbstractHandler {
 	}
 }
 
-class ReadMessageContent extends AbstractHandler {
+class ReadMessageContent extends AbstractDecodeHandler {
 	
 	@Override
 	public EzyIDecodeState nextState() {

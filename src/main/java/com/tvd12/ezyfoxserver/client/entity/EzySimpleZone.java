@@ -2,11 +2,10 @@ package com.tvd12.ezyfoxserver.client.entity;
 
 import com.tvd12.ezyfoxserver.client.EzyClient;
 import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
+import com.tvd12.ezyfoxserver.client.manager.EzyAppManager;
+import com.tvd12.ezyfoxserver.client.manager.EzySimpleAppManager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by tavandung12 on 10/2/18.
@@ -18,16 +17,14 @@ public class EzySimpleZone implements EzyZone, EzyMeAware {
     protected final int id;
     protected final String name;
     protected final EzyClient client;
-    protected final List<EzyApp> appList = new ArrayList<>();
-    protected final Map<Integer, EzyApp> appByIds = new ConcurrentHashMap<>();
-    protected final Map<String, EzyApp> appByNames = new ConcurrentHashMap<>();
+    protected final EzyAppManager appManager;
     protected final Map<String, EzyAppDataHandlers> appDataHandlerss;
 
     public EzySimpleZone(EzyClient client, int id, String name) {
         this.id = id;
         this.name = name;
-        this.me = me;
         this.client = client;
+        this.appManager = new EzySimpleAppManager(name);
         this.appDataHandlerss = client.getHandlerManager().getAppDataHandlerss(name);
     }
 
@@ -57,40 +54,8 @@ public class EzySimpleZone implements EzyZone, EzyMeAware {
     }
 
     @Override
-    public EzyApp getApp() {
-        if(appList.isEmpty())
-            throw new IllegalStateException("has no app in zone: " + name);
-        EzyApp app = appList.get(0);
-        return app;
-    }
-
-    @Override
-    public void addApp(EzyApp app) {
-        this.appList.add(app);
-        this.appByIds.put(app.getId(), app);
-        this.appByNames.put(app.getName(), app);
-    }
-
-    @Override
-    public EzyApp getAppById(int appId) {
-        EzyApp app = appByIds.get(appId);
-        if(app == null)
-            throw new IllegalArgumentException("has no app with id = " + appId);
-        return app;
-    }
-
-    @Override
-    public EzyApp getAppByName(String appName) {
-        EzyApp app = appByNames.get(appName);
-        if(app == null)
-            throw new IllegalArgumentException("has no app with name = " + appName);
-        return app;
-    }
-
-    @Override
-    public List<EzyApp> getAppList() {
-        List<EzyApp> list = new ArrayList<>(appList);
-        return list;
+    public EzyAppManager getAppManager() {
+        return appManager;
     }
 
     @Override

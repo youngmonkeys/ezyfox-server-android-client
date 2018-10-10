@@ -24,7 +24,8 @@ public class EzySimpleSocketDataDecoder implements EzySocketDataDecoder {
 	
 	@Override
 	public Object decode(EzyMessage message) throws Exception {
-		return decoder.decode(message);
+		Object answer = decoder.decode(message);
+		return answer;
 	}
 	
 	@Override

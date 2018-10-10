@@ -1,31 +1,17 @@
 package com.tvd12.ezyfoxserver.client.manager;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Created by tavandung12 on 10/8/18.
  */
 
-public class EzyPingManager {
+public interface EzyPingManager {
 
-    private int maxLostPingCount;
-    private final AtomicInteger lostPingCount;
+    long getPingPeriod();
 
-    public EzyPingManager() {
-        this.maxLostPingCount = 5;
-        this.lostPingCount = new AtomicInteger();
-    }
+    int increaseLostPingCount();
 
-    public void setLostPingCount(int count) {
-        lostPingCount.set(count);
-    }
+    int getMaxLostPingCount();
 
-    public int increaseLostPingCount() {
-        return lostPingCount.incrementAndGet();
-    }
-
-    public int getMaxLostPingCount() {
-        return maxLostPingCount;
-    }
+    void setLostPingCount(int count);
 
 }
