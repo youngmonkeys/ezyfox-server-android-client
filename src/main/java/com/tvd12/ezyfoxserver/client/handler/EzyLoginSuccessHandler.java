@@ -8,6 +8,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzySimpleUser;
 import com.tvd12.ezyfoxserver.client.entity.EzySimpleZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
+import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
 import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 
 /**
@@ -22,8 +23,8 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         EzyData responseData = data.get(5, EzyData.class);
         EzyUser user = newUser(data);
         EzyZone zone = newZone(data);
-        ((EzyMeAware)zone).setMe(user);
-        zoneManager.addZone(zone);
+        ((EzyMeAware)client).setMe(user);
+        ((EzyZoneAware)client).setZone(zone);
         handleResponseAppDatas(zone.getId(), joinedApps);
         handleResponseData(responseData);
         if(joinedApps.isEmpty())

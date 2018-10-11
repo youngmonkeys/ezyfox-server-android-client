@@ -57,4 +57,11 @@ public class EzySimpleAppManager implements EzyAppManager {
         EzyApp app = appsByName.get(appName);
         return app;
     }
+
+    @Override
+    public void clear() {
+        appList.clear();
+        appsById.clear();
+        appsByName.clear();
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by tavandung12 on 10/2/18.
  */
 
-public class EzySimpleZone implements EzyZone, EzyMeAware {
+public class EzySimpleZone implements EzyZone {
 
     protected EzyUser me;
     protected final int id;
@@ -39,16 +39,6 @@ public class EzySimpleZone implements EzyZone, EzyMeAware {
     }
 
     @Override
-    public EzyUser getMe() {
-        return me;
-    }
-
-    @Override
-    public void setMe(EzyUser me) {
-        this.me = me;
-    }
-
-    @Override
     public EzyClient getClient() {
         return client;
     }
@@ -66,5 +56,10 @@ public class EzySimpleZone implements EzyZone, EzyMeAware {
             appDataHandlerss.put(appName, answer);
         }
         return answer;
+    }
+
+    @Override
+    public void reset() {
+        appManager.clear();
     }
 }
