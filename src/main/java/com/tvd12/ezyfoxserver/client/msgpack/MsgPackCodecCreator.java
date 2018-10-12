@@ -11,9 +11,9 @@ import com.tvd12.ezyfoxserver.client.codec.EzySimpleMessageToBytes;
 public class MsgPackCodecCreator implements EzyCodecCreator {
 
 	protected final EzyMessageToBytes messageToBytes
-			= EzySimpleMessageToBytes.builder().build();
+			= new EzySimpleMessageToBytes();
 	protected final EzyObjectToMessage objectToMessage
-			= MsgPackObjectToMessage.builder().build();
+			= new MsgPackObjectToMessage();
 	protected final EzyMessageDeserializer deserializer
 			= new MsgPackSimpleDeserializer();
 	

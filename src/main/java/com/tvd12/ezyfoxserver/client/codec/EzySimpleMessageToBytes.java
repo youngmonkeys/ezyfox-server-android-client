@@ -1,14 +1,9 @@
 package com.tvd12.ezyfoxserver.client.codec;
 
-import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
-
 import java.nio.ByteBuffer;
 
 public class EzySimpleMessageToBytes implements EzyMessageToBytes {
 
-	protected EzySimpleMessageToBytes(Builder builder) {
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public byte[] convert(EzyMessage message) {
@@ -53,19 +48,6 @@ public class EzySimpleMessageToBytes implements EzyMessageToBytes {
 	
 	private int getCapacity(EzyMessage message){
 		return message.getByteCount();
-	}
-	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	public static class Builder implements EzyBuilder<EzyMessageToBytes> {
-		
-		@Override
-		public EzyMessageToBytes build() {
-			return new EzySimpleMessageToBytes(this);
-		}
-		
 	}
 	
 }

@@ -85,7 +85,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         if(cmd == EzyCommand.DISCONNECT)
             handleDisconnection(responseData);
         else
-            handleOtherCommand(cmd, responseData);
+            handleResponseData(cmd, responseData);
     }
 
     private void handleDisconnection(EzyArray responseData) {
@@ -94,7 +94,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         dataHandler.fireSocketDisconnected(disconnectReason);
     }
 
-    private void handleOtherCommand(final Object cmd, final EzyArray responseData) {
+    private void handleResponseData(final Object cmd, final EzyArray responseData) {
         final EzyDataHandler handler = handlerManager.getDataHandler(cmd);
         if (handler != null) {
             uihandler.post(new Runnable() {

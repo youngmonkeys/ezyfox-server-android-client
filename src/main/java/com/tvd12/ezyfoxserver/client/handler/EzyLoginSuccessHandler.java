@@ -8,7 +8,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzySimpleUser;
 import com.tvd12.ezyfoxserver.client.entity.EzySimpleZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
-import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
+import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
 
 /**
  * Created by tavandung12 on 10/1/18.
@@ -22,9 +22,9 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         EzyData responseData = data.get(5, EzyData.class);
         EzyUser user = newUser(data);
         EzyZone zone = newZone(data);
-        ((EzyMeAware)zone).setMe(user);
-        client.addZone(zone);
-        handleResponseAppDatas(zone.getId(), joinedApps);
+        ((EzyMeAware)client).setMe(user);
+        ((EzyZoneAware)client).setZone(zone);
+        handleResponseAppDatas(joinedApps);
         handleResponseData(responseData);
         if(joinedApps.isEmpty())
             handleLoginSuccess(responseData);
@@ -35,23 +35,18 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
     protected void handleResponseData(EzyData responseData) {
     }
 
-    protected void handleResponseAppDatas(int zoneId, EzyArray appDatas) {
+    protected void handleResponseAppDatas(EzyArray appDatas) {
         EzyDataHandler appAccessHandler =
                 handlerManager.getDataHandler(EzyCommand.APP_ACCESS);
         for(int i = 0 ; i < appDatas.size() ; i++) {
             EzyArray appData = appDatas.get(i, EzyArray.class);
-            EzyArray accessAppData = newAccessAppData(zoneId, appData);
+            EzyArray accessAppData = newAccessAppData(appData);
             appAccessHandler.handle(accessAppData);
         }
     }
 
-    protected EzyArray newAccessAppData(int zoneId, EzyArray appData) {
-        EzyArray accessAppData = EzyEntityFactory.newArrayBuilder()
-                .append(zoneId)
-                .append(appData.get(0, int.class))
-                .append(appData.get(1, String.class))
-                .build();
-        return accessAppData;
+    protected EzyArray newAccessAppData(EzyArray appData) {
+        return appData;
     }
 
     protected EzyUser newUser(EzyArray data) {

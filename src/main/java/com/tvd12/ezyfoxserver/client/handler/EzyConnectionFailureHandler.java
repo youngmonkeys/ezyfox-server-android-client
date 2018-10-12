@@ -3,6 +3,8 @@ package com.tvd12.ezyfoxserver.client.handler;
 import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.EzyConnectionStatusAware;
+import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
+import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionFailureEvent;
 
@@ -15,11 +17,21 @@ public class EzyConnectionFailureHandler extends EzyAbstractEventHandler<EzyConn
     @Override
     public final void handle(EzyConnectionFailureEvent event) {
         Log.i("ezyfox-client", "connection failure, reason = " + event.getReason());
-        boolean reconnecting = client.reconnect();
+        EzyClientConfig config = client.getConfig();
+        EzyReconnectConfig reconnectConfig = config.getReconnect();
+        boolean shouldReconnect = shouldReconnect(event);
+        boolean mustReconnect = reconnectConfig.isEnable() && shouldReconnect;
+        boolean reconnecting = false;
+        if(mustReconnect)
+            reconnecting = client.reconnect();
         if(!reconnecting) {
             setSatus();
             control(event);
         }
+    }
+
+    protected boolean shouldReconnect(EzyConnectionFailureEvent event) {
+        return true;
     }
 
     protected void control(EzyConnectionFailureEvent event) {

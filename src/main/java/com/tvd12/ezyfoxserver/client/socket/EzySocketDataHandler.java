@@ -69,6 +69,10 @@ public class EzySocketDataHandler implements EzyResettable {
         EzyEvent event = new EzyDisconnectionEvent(reason);
         EzySocketEvent socketEvent = new EzySimpleSocketEvent(
                 EzySocketEventType.EVENT, event);
+        fireSocketEvent(socketEvent);
+    }
+
+    public void fireSocketEvent(EzySocketEvent socketEvent) {
         eventQueue.add(socketEvent);
     }
 

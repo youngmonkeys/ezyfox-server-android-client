@@ -10,7 +10,9 @@ public enum EzyEventType implements EzyConstant {
 
     CONNECTION_SUCCESS(1),
     CONNECTION_FAILURE(2),
-    DISCONNECTION(3);
+    DISCONNECTION(3),
+    LOST_PING(4),
+    TRY_CONNECT(5);
 
     private final int id;
 

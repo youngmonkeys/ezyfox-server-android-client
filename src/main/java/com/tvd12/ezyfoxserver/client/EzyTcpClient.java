@@ -4,18 +4,21 @@ import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.command.EzySetup;
 import com.tvd12.ezyfoxserver.client.command.EzySimpleSetup;
-import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
+import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyApp;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.entity.EzyEntity;
+import com.tvd12.ezyfoxserver.client.entity.EzyMeAware;
+import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
+import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
-import com.tvd12.ezyfoxserver.client.manager.EzySimpleZoneManager;
-import com.tvd12.ezyfoxserver.client.manager.EzyZoneManager;
+import com.tvd12.ezyfoxserver.client.manager.EzySimpleHandlerManager;
+import com.tvd12.ezyfoxserver.client.manager.EzySimplePingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
@@ -23,7 +26,6 @@ import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,14 +35,15 @@ import java.util.Set;
 
 public class EzyTcpClient
         extends EzyEntity
-        implements EzyClient, EzyConnectionStatusAware {
+        implements EzyClient, EzyMeAware, EzyZoneAware, EzyConnectionStatusAware {
 
-    private final Object name;
-    private final EzyZoneManager zoneManager;
+    private EzyUser me;
+    private EzyZone zone;
+    private final String zoneName;
+    private final EzyClientConfig config;
     private final EzyPingManager pingManager;
     private final EzyHandlerManager handlerManager;
     private final Map<Integer, EzyApp> appsById;
-    private final EzyReconnectConfig reconnectConfig;
 
     private EzyConstant status;
     private final Object statusLock;
@@ -49,22 +52,13 @@ public class EzyTcpClient
     private final EzySocketClient socketClient;
     private final EzyPingSchedule pingSchedule;
 
-    public EzyTcpClient() {
-        this(DEFAULT_CLIENT_NAME);
-    }
-
-    public EzyTcpClient(Object name) {
-        this(name, new EzyReconnectConfig());
-    }
-
-    public EzyTcpClient(Object name, EzyReconnectConfig reconnectConfig) {
-        this.name = name;
-        this.reconnectConfig = reconnectConfig;
+    public EzyTcpClient(EzyClientConfig config) {
+        this.config = config;
+        this.zoneName = config.getZoneName();
         this.status = EzyConnectionStatus.NULL;
         this.statusLock = new Object();
         this.unloggableCommands = newUnloggableCommands();
-        this.zoneManager = new EzySimpleZoneManager();
-        this.pingManager = new EzyPingManager();
+        this.pingManager = new EzySimplePingManager();
         this.appsById = new HashMap<>();
         this.pingSchedule = new EzyPingSchedule(this);
         this.handlerManager = newHandlerManager();
@@ -77,7 +71,7 @@ public class EzyTcpClient
     }
 
     private EzyHandlerManager newHandlerManager() {
-        return new EzyHandlerManager(this, pingSchedule);
+        return new EzySimpleHandlerManager(this, pingSchedule);
     }
 
     private Set<Object> newUnloggableCommands() {
@@ -93,7 +87,7 @@ public class EzyTcpClient
 
     private EzySocketClient newSocketClient() {
         EzyTcpSocketClient client = new EzyTcpSocketClient(
-                reconnectConfig,
+                config.getReconnect(),
                 handlerManager,
                 pingManager,
                 pingSchedule, unloggableCommands);
@@ -103,7 +97,7 @@ public class EzyTcpClient
     @Override
     public void connect(String host, int port) {
         try {
-            zoneManager.reset();
+            resetComponents();
             socketClient.connect(host, port);
             setStatus(EzyConnectionStatus.CONNECTING);
         } catch (Exception e) {
@@ -113,23 +107,29 @@ public class EzyTcpClient
 
     @Override
     public void connect() {
-        zoneManager.reset();
+        resetComponents();
         socketClient.connect();
         setStatus(EzyConnectionStatus.CONNECTING);
     }
 
     @Override
     public boolean reconnect() {
-        zoneManager.reset();
+        resetComponents();
         boolean success = socketClient.reconnect();
         if(success)
             setStatus(EzyConnectionStatus.RECONNECTING);
         return success;
     }
 
+    private void resetComponents() {
+        this.me = null;
+        this.zone = null;
+    }
+
     @Override
     public void disconnect() {
         socketClient.disconnect();
+        setStatus(EzyConnectionStatus.DISCONNECTED);
     }
 
     @Override
@@ -148,8 +148,33 @@ public class EzyTcpClient
     }
 
     @Override
-    public Object getName() {
-        return name;
+    public EzyClientConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public EzyZone getZone() {
+        return zone;
+    }
+
+    @Override
+    public void setZone(EzyZone zone) {
+        this.zone = zone;
+    }
+
+    @Override
+    public EzyUser getMe() {
+        return me;
+    }
+
+    @Override
+    public void setMe(EzyUser me) {
+        this.me = me;
+    }
+
+    @Override
+    public String getZoneName() {
+        return zoneName;
     }
 
     @Override
@@ -167,16 +192,6 @@ public class EzyTcpClient
     }
 
     @Override
-    public void addZone(EzyZone zone) {
-        zoneManager.addZone(zone);
-    }
-
-    @Override
-    public EzyZone getZoneById(int zoneId) {
-        return zoneManager.getZoneById(zoneId);
-    }
-
-    @Override
     public void addApp(EzyApp app) {
         appsById.put(app.getId(), app);
     }
@@ -186,21 +201,6 @@ public class EzyTcpClient
         if(appsById.containsKey(appId))
             return appsById.get(appId);
         throw new IllegalArgumentException("has no app with id = " + appId);
-    }
-
-    @Override
-    public EzyZone getZoneByName(String zoneName) {
-        return zoneManager.getZoneByName(zoneName);
-    }
-
-    @Override
-    public EzyZone getZone() {
-        return zoneManager.getZone();
-    }
-
-    @Override
-    public List<EzyZone> getZoneList() {
-        return zoneManager.getZoneList();
     }
 
     @Override
