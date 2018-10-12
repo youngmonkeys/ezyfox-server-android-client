@@ -25,14 +25,14 @@ public class EzySimpleHandlerManager implements EzyHandlerManager {
     private final EzyPingSchedule pingSchedule;
     private final EzyEventHandlers eventHandlers;
     private final EzyDataHandlers dataHandlers;
-    private final Map<String, Map<String, EzyAppDataHandlers>> zoneAppDataHandlerss;
+    private final Map<String, EzyAppDataHandlers> appDataHandlerss;
 
     public EzySimpleHandlerManager(EzyClient client, EzyPingSchedule pingSchedule) {
         this.client = client;
         this.pingSchedule = pingSchedule;
         this.eventHandlers = newEventHandlers();
         this.dataHandlers = newDataHandlers();
-        this.zoneAppDataHandlerss = new HashMap<>();
+        this.appDataHandlerss = new HashMap<>();
     }
 
     private EzyEventHandlers newEventHandlers() {
@@ -58,11 +58,11 @@ public class EzySimpleHandlerManager implements EzyHandlerManager {
     }
 
     @Override
-    public Map<String, EzyAppDataHandlers> getAppDataHandlerss(String zoneName) {
-        Map<String, EzyAppDataHandlers> answer = zoneAppDataHandlerss.get(zoneName);
+    public EzyAppDataHandlers getAppDataHandlers(String appName) {
+        EzyAppDataHandlers answer = appDataHandlerss.get(appName);
         if(answer == null) {
-            answer = new HashMap<>();
-            zoneAppDataHandlerss.put(zoneName, answer);
+            answer = new EzyAppDataHandlers();
+            appDataHandlerss.put(appName, answer);
         }
         return answer;
     }
@@ -75,15 +75,5 @@ public class EzySimpleHandlerManager implements EzyHandlerManager {
     @Override
     public void addEventHandler(EzyConstant eventType, EzyEventHandler eventHandler) {
         eventHandlers.addHandler(eventType, eventHandler);
-    }
-
-    @Override
-    public Map<String,EzyAppDataHandlers> getDataHandlers(String zoneName) {
-        Map<String, EzyAppDataHandlers> appDataHandlerss = zoneAppDataHandlerss.get(zoneName);
-        if(appDataHandlerss == null) {
-            appDataHandlerss = new HashMap<>();
-            zoneAppDataHandlerss.put(zoneName, appDataHandlerss);
-        }
-        return appDataHandlerss;
     }
 }

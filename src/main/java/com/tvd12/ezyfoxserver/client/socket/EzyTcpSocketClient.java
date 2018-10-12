@@ -285,7 +285,7 @@ public class EzyTcpSocketClient
 
         private void handleConnect(long sleepTime) {
             try {
-                Log.i("ezyfox-client", "sleeping before connect to server");
+                Log.i("ezyfox-client", "sleeping " + sleepTime + "ms before connect to server");
                 sleepBeforeConnect(sleepTime);
                 connect0();
                 startDataEventHandlingLoop();

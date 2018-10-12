@@ -1,7 +1,6 @@
 package com.tvd12.ezyfoxserver.client.entity;
 
 import com.tvd12.ezyfoxserver.client.EzyClient;
-import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 import com.tvd12.ezyfoxserver.client.manager.EzyAppManager;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
@@ -18,7 +17,5 @@ public interface EzyZone extends EzyResettable {
     EzyClient getClient();
 
     EzyAppManager getAppManager();
-
-    EzyAppDataHandlers getAppDataHandlers(String appName);
 
 }

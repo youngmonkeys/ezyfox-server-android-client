@@ -5,8 +5,6 @@ import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
 
-import java.util.Map;
-
 /**
  * Created by tavandung12 on 10/9/18.
  */
@@ -21,7 +19,5 @@ public interface EzyHandlerManager {
 
     void addEventHandler(EzyConstant eventType, EzyEventHandler eventHandler);
 
-    Map<String,EzyAppDataHandlers> getDataHandlers(String zoneName);
-
-    Map<String, EzyAppDataHandlers> getAppDataHandlerss(String zoneName);
+    EzyAppDataHandlers getAppDataHandlers(String appName);
 }
