@@ -1,5 +1,6 @@
 package com.tvd12.ezyfoxserver.client;
 
+import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
@@ -24,6 +25,8 @@ public interface EzyClient extends
     boolean reconnect();
 
     void disconnect();
+
+    EzyClientConfig getConfig();
 
     EzyZone getZone();
 

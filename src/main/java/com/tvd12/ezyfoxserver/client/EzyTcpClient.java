@@ -122,6 +122,7 @@ public class EzyTcpClient
     }
 
     private void resetComponents() {
+        this.me = null;
         this.zone = null;
     }
 
@@ -144,6 +145,11 @@ public class EzyTcpClient
     public <T> T get(Class<T> key) {
         T instance = getProperty(key);
         return instance;
+    }
+
+    @Override
+    public EzyClientConfig getConfig() {
+        return config;
     }
 
     @Override

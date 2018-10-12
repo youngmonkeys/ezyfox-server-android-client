@@ -14,6 +14,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionFailureEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionSuccessEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
+import com.tvd12.ezyfoxserver.client.event.EzyTryConnectEvent;
 import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
@@ -147,6 +148,10 @@ public class EzyTcpSocketClient
         handleConnection(reconnectSleepTime);
         reconnectCount++;
         Log.i("ezyfox-client", "try reconnect to server: " + reconnectCount + ", wating time: " + reconnectSleepTime);
+        EzyEvent tryConnectEvent = new EzyTryConnectEvent(reconnectCount);
+        EzySocketEvent tryConnectSocketEvent
+                = new EzySimpleSocketEvent(EzySocketEventType.EVENT, tryConnectEvent);
+        dataHandler.fireSocketEvent(tryConnectSocketEvent);
         return true;
     }
 
@@ -186,7 +191,7 @@ public class EzyTcpSocketClient
             event = EzyConnectionFailureEvent.unknown();
         }
         EzySocketEvent socketEvent = new EzySimpleSocketEvent(EzySocketEventType.EVENT, event);
-        eventQueue.add(socketEvent);
+        dataHandler.fireSocketEvent(socketEvent);
         return success;
     }
 
