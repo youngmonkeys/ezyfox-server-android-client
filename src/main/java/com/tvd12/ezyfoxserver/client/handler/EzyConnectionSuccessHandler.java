@@ -1,6 +1,5 @@
 package com.tvd12.ezyfoxserver.client.handler;
 
-import com.tvd12.ezyfoxserver.client.EzyConnectionStatusAware;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.request.EzyHandshakeRequest;
@@ -21,7 +20,7 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
     }
 
     private void updateConnectionStatus() {
-        ((EzyConnectionStatusAware)client).setStatus(EzyConnectionStatus.CONNECTED);
+        client.setStatus(EzyConnectionStatus.CONNECTED);
     }
 
     protected void postHandle() {

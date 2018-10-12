@@ -50,7 +50,7 @@ public class EzyPingSchedule {
             Thread.sleep(periodMillis);
             sendPingRequest();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e("ezyfox-client", "ping thread has interrupted", e);
         }
     }
 

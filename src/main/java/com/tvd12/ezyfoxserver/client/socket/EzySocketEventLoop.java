@@ -14,11 +14,7 @@ public abstract class EzySocketEventLoop
 		implements EzyStartable, EzyDestroyable, EzyResettable {
 
 	protected ExecutorService threadPool;
-	
 	protected volatile boolean active;
-	
-	public EzySocketEventLoop() {
-	}
 	
 	protected abstract String threadName();
 	protected abstract int threadPoolSize();

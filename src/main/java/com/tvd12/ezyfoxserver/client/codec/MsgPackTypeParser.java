@@ -1,4 +1,4 @@
-package com.tvd12.ezyfoxserver.client.msgpack;
+package com.tvd12.ezyfoxserver.client.codec;
 
 public class MsgPackTypeParser {
 

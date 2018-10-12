@@ -1,12 +1,4 @@
-package com.tvd12.ezyfoxserver.client.msgpack;
-
-import com.tvd12.ezyfoxserver.client.codec.EzyMessage;
-import com.tvd12.ezyfoxserver.client.codec.EzyMessageHeader;
-import com.tvd12.ezyfoxserver.client.codec.EzyMessageSerializer;
-import com.tvd12.ezyfoxserver.client.codec.EzyObjectToBytes;
-import com.tvd12.ezyfoxserver.client.codec.EzyObjectToMessage;
-import com.tvd12.ezyfoxserver.client.codec.EzySimpleMessage;
-import com.tvd12.ezyfoxserver.client.codec.EzySimpleMessageHeader;
+package com.tvd12.ezyfoxserver.client.codec;
 
 public class MsgPackObjectToMessage implements EzyObjectToMessage {
 

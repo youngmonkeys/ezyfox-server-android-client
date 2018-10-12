@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class EzyTcpClient
         extends EzyEntity
-        implements EzyClient, EzyMeAware, EzyZoneAware, EzyConnectionStatusAware {
+        implements EzyClient, EzyMeAware, EzyZoneAware {
 
     private EzyUser me;
     private EzyZone zone;
@@ -87,7 +87,7 @@ public class EzyTcpClient
 
     private EzySocketClient newSocketClient() {
         EzyTcpSocketClient client = new EzyTcpSocketClient(
-                config.getReconnect(),
+                config,
                 handlerManager,
                 pingManager,
                 pingSchedule, unloggableCommands);

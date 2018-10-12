@@ -1,6 +1,5 @@
-package com.tvd12.ezyfoxserver.client.msgpack;
+package com.tvd12.ezyfoxserver.client.codec;
 
-import com.tvd12.ezyfoxserver.client.codec.EzyAbstractToBytesSerializer;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyArrayList;
 import com.tvd12.ezyfoxserver.client.entity.EzyHashMap;
@@ -32,23 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_ARRAY16_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_BIN16_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_BIN32_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_BIN8_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_FIXARRAY_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_FIXMAP_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_FIXSTR_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_MAP16_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_POSITIVE_FIXINT;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_STR16_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_STR8_SIZE;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MAX_UINT8;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MIN_INT16;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MIN_INT32;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MIN_INT8;
-import static com.tvd12.ezyfoxserver.client.msgpack.MsgPackConstant.MIN_NEGATIVE_FIXINT;
 
 
 public class MsgPackSimpleSerializer 
@@ -623,9 +605,9 @@ public class MsgPackSimpleSerializer
 class BinSizeSerializer extends EzyCastToByte {
 	
 	public byte[] serialize(int size) {
-		if(size <= MAX_BIN8_SIZE)
+		if(size <= MsgPackConstant.MAX_BIN8_SIZE)
 			return parse8(size);
-		if(size <= MAX_BIN16_SIZE)
+		if(size <= MsgPackConstant.MAX_BIN16_SIZE)
 			return parse16(size);
 		return parse32(size);
 	}
@@ -648,11 +630,11 @@ class BinSizeSerializer extends EzyCastToByte {
 class StringSizeSerializer extends EzyCastToByte {
 	
 	public byte[] serialize(int size) {
-		if(size <= MAX_FIXSTR_SIZE)
+		if(size <= MsgPackConstant.MAX_FIXSTR_SIZE)
 			return parseFix(size);
-		if(size <= MAX_STR8_SIZE)
+		if(size <= MsgPackConstant.MAX_STR8_SIZE)
 			return parse8(size);
-		if(size <= MAX_STR16_SIZE)
+		if(size <= MsgPackConstant.MAX_STR16_SIZE)
 			return parse16(size);
 		return parse32(size);
 	}
@@ -679,9 +661,9 @@ class StringSizeSerializer extends EzyCastToByte {
 class ArraySizeSerializer extends EzyCastToByte {
 	
 	public byte[] serialize(int size) {
-		if(size <= MAX_FIXARRAY_SIZE)
+		if(size <= MsgPackConstant.MAX_FIXARRAY_SIZE)
 			return parseFix(size);
-		if(size <= MAX_ARRAY16_SIZE)
+		if(size <= MsgPackConstant.MAX_ARRAY16_SIZE)
 			return parse16(size);
 		return parse32(size);
 	}
@@ -704,9 +686,9 @@ class ArraySizeSerializer extends EzyCastToByte {
 class MapSizeSerializer extends EzyCastToByte {
 	
 	public byte[] serialize(int size) {
-		if(size <= MAX_FIXMAP_SIZE)
+		if(size <= MsgPackConstant.MAX_FIXMAP_SIZE)
 			return parseFix(size);
-		if(size <= MAX_MAP16_SIZE)
+		if(size <= MsgPackConstant.MAX_MAP16_SIZE)
 			return parse16(size);
 		return parse32(size);
 	}
@@ -735,13 +717,13 @@ class IntSerializer extends EzyCastToByte {
 	}
 	
 	private byte[] parsePositive(long value) {
-		if(value <= MAX_POSITIVE_FIXINT)
+		if(value <= MsgPackConstant.MAX_POSITIVE_FIXINT)
 			return parsePositiveFix(value);
-		if(value < MAX_UINT8)
+		if(value < MsgPackConstant.MAX_UINT8)
 			return parseU8(value);
-		if(value < MAX_BIN16_SIZE)
+		if(value < MsgPackConstant.MAX_BIN16_SIZE)
 			return parseU16(value);
-		if(value < MAX_BIN32_SIZE)
+		if(value < MsgPackConstant.MAX_BIN32_SIZE)
 			return parseU32(value);
 		return parseU64(value);
 	}
@@ -767,13 +749,13 @@ class IntSerializer extends EzyCastToByte {
 	}
 	
 	private byte[] parseNegative(long value) {
-		if(value >= MIN_NEGATIVE_FIXINT)
+		if(value >= MsgPackConstant.MIN_NEGATIVE_FIXINT)
 			return parseNegativeFix(value);
-		if(value >= MIN_INT8)
+		if(value >= MsgPackConstant.MIN_INT8)
 			return parse8(value);
-		if(value >= MIN_INT16)
+		if(value >= MsgPackConstant.MIN_INT16)
 			return parse16(value);
-		if(value >= MIN_INT32)
+		if(value >= MsgPackConstant.MIN_INT32)
 			return parse32(value);
 		return parse64(value);
 	}

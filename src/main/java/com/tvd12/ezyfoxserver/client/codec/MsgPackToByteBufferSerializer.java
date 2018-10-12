@@ -1,6 +1,5 @@
-package com.tvd12.ezyfoxserver.client.msgpack;
+package com.tvd12.ezyfoxserver.client.codec;
 
-import com.tvd12.ezyfoxserver.client.codec.EzyAbstractToByteBufferSerializer;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyArrayList;
 import com.tvd12.ezyfoxserver.client.entity.EzyHashMap;

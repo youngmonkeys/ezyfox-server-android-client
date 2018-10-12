@@ -14,8 +14,6 @@ public interface EzyAppGroup extends EzyAppByIdGroup {
 
     List<EzyApp> getAppList();
 
-    EzyApp getAppById(int appId);
-
     EzyApp getAppByName(String appName);
 
 }
