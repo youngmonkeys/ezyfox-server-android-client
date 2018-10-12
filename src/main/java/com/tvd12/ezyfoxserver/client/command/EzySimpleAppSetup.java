@@ -10,9 +10,9 @@ import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 public class EzySimpleAppSetup implements EzyAppSetup {
 
     private final EzyAppDataHandlers dataHandlers;
-    private final EzyZoneSetup parent;
+    private final EzySetup parent;
 
-    public EzySimpleAppSetup(EzyAppDataHandlers dataHandlers, EzyZoneSetup parent) {
+    public EzySimpleAppSetup(EzyAppDataHandlers dataHandlers, EzySetup parent) {
         this.parent = parent;
         this.dataHandlers = dataHandlers;
     }
@@ -24,7 +24,7 @@ public class EzySimpleAppSetup implements EzyAppSetup {
     }
 
     @Override
-    public EzyZoneSetup done() {
+    public EzySetup done() {
         return parent;
     }
 }

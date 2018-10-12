@@ -16,11 +16,11 @@ import java.util.Map;
 public class EzySimpleSetup implements EzySetup {
 
     private final EzyHandlerManager handlerManager;
-    private final Map<String, EzyZoneSetup> zoneSetups;
+    private final Map<String, EzyAppSetup> appSetups;
 
     public EzySimpleSetup(EzyHandlerManager handlerManager) {
         this.handlerManager = handlerManager;
-        this.zoneSetups = new HashMap<>();
+        this.appSetups = new HashMap<>();
     }
 
     @Override
@@ -36,12 +36,13 @@ public class EzySimpleSetup implements EzySetup {
     }
 
     @Override
-    public EzyZoneSetup setupZone(String zoneName) {
-        EzyZoneSetup zoneSetup = zoneSetups.get(zoneName);
-        if(zoneSetup == null) {
-            Map<String, EzyAppDataHandlers> appDataHandlerss = handlerManager.getDataHandlers(zoneName);
-            zoneSetup = new EzySimpleZoneSetup(appDataHandlerss, this);
+    public EzyAppSetup setupApp(String appName) {
+        EzyAppSetup appSetup = appSetups.get(appName);
+        if(appSetup == null) {
+            EzyAppDataHandlers dataHandlers = handlerManager.getAppDataHandlers(appName);
+            appSetup = new EzySimpleAppSetup(dataHandlers, this);
+            appSetups.put(appName, appSetup);
         }
-        return zoneSetup;
+        return appSetup;
     }
 }

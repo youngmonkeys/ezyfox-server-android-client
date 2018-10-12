@@ -10,6 +10,6 @@ public interface EzyAppSetup {
 
     EzyAppSetup addDataHandler(Object cmd, EzyAppDataHandler dataHandler);
 
-    EzyZoneSetup done();
+    EzySetup done();
 
 }

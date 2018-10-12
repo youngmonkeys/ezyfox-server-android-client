@@ -25,7 +25,7 @@ public class EzySimpleApp extends EzyEntity implements EzyApp {
         this.zone = zone;
         this.id = id;
         this.name = name;
-        this.dataHandlers = zone.getAppDataHandlers(name);
+        this.dataHandlers = client.getHandlerManager().getAppDataHandlers(name);
     }
 
     @Override
