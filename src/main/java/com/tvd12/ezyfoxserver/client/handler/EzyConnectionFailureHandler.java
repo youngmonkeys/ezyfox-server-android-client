@@ -2,7 +2,6 @@ package com.tvd12.ezyfoxserver.client.handler;
 
 import android.util.Log;
 
-import com.tvd12.ezyfoxserver.client.EzyConnectionStatusAware;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
@@ -25,7 +24,7 @@ public class EzyConnectionFailureHandler extends EzyAbstractEventHandler<EzyConn
         if(mustReconnect)
             reconnecting = client.reconnect();
         if(!reconnecting) {
-            setSatus();
+            client.setStatus(EzyConnectionStatus.FAILURE);
             control(event);
         }
     }
@@ -35,9 +34,5 @@ public class EzyConnectionFailureHandler extends EzyAbstractEventHandler<EzyConn
     }
 
     protected void control(EzyConnectionFailureEvent event) {
-    }
-
-    private void setSatus() {
-        ((EzyConnectionStatusAware)client).setStatus(EzyConnectionStatus.FAILURE);
     }
 }

@@ -36,6 +36,8 @@ public interface EzyClient extends
 
     EzyConstant getStatus();
 
+    void setStatus(EzyConstant status);
+
     EzyPingManager getPingManager();
 
     EzyHandlerManager getHandlerManager();

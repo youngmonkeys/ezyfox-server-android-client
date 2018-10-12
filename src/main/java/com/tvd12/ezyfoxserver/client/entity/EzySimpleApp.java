@@ -78,4 +78,8 @@ public class EzySimpleApp extends EzyEntity implements EzyApp {
         EzyAppDataHandler handler = dataHandlers.getHandler(cmd);
         return handler;
     }
+
+    @Override
+    public void destroy() {
+    }
 }

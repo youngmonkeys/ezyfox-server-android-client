@@ -23,4 +23,8 @@ public class EzySimpleUser implements EzyUser {
     public String getName() {
         return name;
     }
+
+    @Override
+    public void destroy() {
+    }
 }

@@ -11,11 +11,9 @@ import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 
 public class EzyPingRequest implements EzyRequest {
 
-    private static final EzyArray EMPTY_DATA = EzyEntityFactory.newArray();
-
     @Override
     public EzyData serialize() {
-        return EMPTY_DATA;
+        return EzyEntityFactory.EMPTY_ARRAY;
     }
 
     @Override

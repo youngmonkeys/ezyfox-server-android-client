@@ -1,8 +1,7 @@
-package com.tvd12.ezyfoxserver.client.msgpack;
+package com.tvd12.ezyfoxserver.client.codec;
 
 import com.tvd12.ezyfoxserver.client.builder.EzyArrayBuilder;
 import com.tvd12.ezyfoxserver.client.builder.EzyObjectBuilder;
-import com.tvd12.ezyfoxserver.client.codec.EzyMessageDeserializer;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyObject;
 import com.tvd12.ezyfoxserver.client.function.EzyParser;

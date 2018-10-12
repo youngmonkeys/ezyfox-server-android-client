@@ -9,6 +9,8 @@ public final class EzyEntityFactory {
 
 	private static final EzyEntityCreator CREATOR 
 			= new EzySimpleEntityCreator();
+
+	public static final EzyArray EMPTY_ARRAY = newArray();
 	
 	private EzyEntityFactory() {
 		// do nothing

@@ -31,10 +31,6 @@ public class EzySocketReader
 		}
 	}
 	
-	private int getMaxBufferSize() {
-		return EzySocketConstants.MAX_READ_BUFFER_SIZE;
-	}
-	
 	private void processSocketChannel() throws Exception {
 		if(socketChannel == null)
 			return;
@@ -65,6 +61,10 @@ public class EzySocketReader
 
 	public void setSocketChannel(SocketChannel socketChannel) {
 		this.socketChannel = socketChannel;
+	}
+
+	private int getMaxBufferSize() {
+		return EzySocketConstants.MAX_READ_BUFFER_SIZE;
 	}
 
 	@Override

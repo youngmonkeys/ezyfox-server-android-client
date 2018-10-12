@@ -1,11 +1,8 @@
 package com.tvd12.ezyfoxserver.client.entity;
 
 import com.tvd12.ezyfoxserver.client.EzyClient;
-import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 import com.tvd12.ezyfoxserver.client.manager.EzyAppManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimpleAppManager;
-
-import java.util.Map;
 
 /**
  * Created by tavandung12 on 10/2/18.
@@ -13,7 +10,6 @@ import java.util.Map;
 
 public class EzySimpleZone implements EzyZone {
 
-    protected EzyUser me;
     protected final int id;
     protected final String name;
     protected final EzyClient client;
@@ -47,7 +43,7 @@ public class EzySimpleZone implements EzyZone {
     }
 
     @Override
-    public void reset() {
+    public void destroy() {
         appManager.clear();
     }
 }

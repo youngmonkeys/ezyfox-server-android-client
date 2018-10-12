@@ -4,8 +4,8 @@ import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 
 public interface EzyCodecFactory {
 
-    Object newEncoder(EzyConstant type);
+    Object newEncoder(EzyConstant connectionType);
     
-	Object newDecoder(EzyConstant type);
+	Object newDecoder(EzyConstant connectionType);
 	
 }

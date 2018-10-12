@@ -1,7 +1,6 @@
 package com.tvd12.ezyfoxserver.client.codec;
 
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
-import com.tvd12.ezyfoxserver.client.msgpack.MsgPackCodecCreator;
 
 public class EzySimpleCodecFactory implements EzyCodecFactory {
 
@@ -12,13 +11,13 @@ public class EzySimpleCodecFactory implements EzyCodecFactory {
 	}
 	
 	@Override
-    public Object newEncoder(EzyConstant type) {
+    public Object newEncoder(EzyConstant connectionType) {
         Object encoder = socketCodecCreator.newEncoder();
         return encoder;
     }
 	
 	@Override
-	public Object newDecoder(EzyConstant type) {
+	public Object newDecoder(EzyConstant connectionType) {
 		Object decoder = socketCodecCreator.newDecoder(Integer.MAX_VALUE);
 		return decoder;
 	}

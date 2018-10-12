@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.codec.EzyCodecFactory;
 import com.tvd12.ezyfoxserver.client.codec.EzySimpleCodecFactory;
+import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionType;
@@ -58,12 +59,12 @@ public class EzyTcpSocketClient
     protected final EzySocketReadingLoopHandler socketReadingLoopHandler;
     protected final EzySocketWritingLoopHandler socketWritingLoopHandler;
 
-    public EzyTcpSocketClient(EzyReconnectConfig reconnectConfig,
+    public EzyTcpSocketClient(EzyClientConfig clientConfig,
                               EzyHandlerManager handlerManager,
                               EzyPingManager pingManager,
                               EzyPingSchedule pingSchedule,
                               Set<Object> unloggableCommands) {
-        this.reconnectConfig = reconnectConfig;
+        this.reconnectConfig = clientConfig.getReconnect();
         this.handlerManager = handlerManager;
         this.pingManager = pingManager;
         this.pingSchedule = pingSchedule;
