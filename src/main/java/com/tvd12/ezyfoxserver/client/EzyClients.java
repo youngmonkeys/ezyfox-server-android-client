@@ -12,10 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class EzyClients {
 
     private String defaultClientName;
-    private final Map<Object, EzyClient> clients = new ConcurrentHashMap<>();
+    private final Map<String, EzyClient> clients;
     private static final EzyClients INSTANCE = new EzyClients();
 
     private EzyClients() {
+        this.clients = new ConcurrentHashMap<>();
     }
 
     public static EzyClients getInstance() {
@@ -26,21 +27,21 @@ public final class EzyClients {
         EzyClient client = new EzyTcpClient(config);
         addClient(client);
         if(defaultClientName == null)
-            defaultClientName = client.getZoneName();
+            defaultClientName = client.getName();
         return client;
     }
 
     public EzyClient newDefaultClient(EzyClientConfig config) {
         EzyClient client = newClient(config);
-        defaultClientName = config.getZoneName();
+        defaultClientName = client.getName();
         return client;
     }
 
     public void addClient(EzyClient client) {
-        this.clients.put(client.getZoneName(), client);
+        this.clients.put(client.getName(), client);
     }
 
-    public EzyClient getClient(Object name) {
+    public EzyClient getClient(String name) {
         if(clients.containsKey(name))
             return clients.get(name);
         throw new IllegalArgumentException("has no client with name: " + name);

@@ -9,15 +9,23 @@ import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
 public class EzyClientConfig {
 
     private final String zoneName;
+    private final String clientName;
     private final EzyReconnectConfig reconnect;
 
     protected EzyClientConfig(Builder builder) {
         this.zoneName = builder.zoneName;
+        this.clientName = builder.clientName;
         this.reconnect = builder.reconnectConfigBuilder.build();
     }
 
     public String getZoneName() {
         return zoneName;
+    }
+
+    public String getClientName() {
+        if(clientName == null)
+            return zoneName;
+        return clientName;
     }
 
     public EzyReconnectConfig getReconnect() {
@@ -31,6 +39,7 @@ public class EzyClientConfig {
     public static class Builder implements EzyBuilder<EzyClientConfig> {
 
         private String zoneName;
+        private String clientName;
         private final EzyReconnectConfig.Builder reconnectConfigBuilder;
 
         public Builder() {
@@ -39,6 +48,11 @@ public class EzyClientConfig {
 
         public Builder zoneName(String zoneName) {
             this.zoneName = zoneName;
+            return this;
+        }
+
+        public Builder clientName(String clientName) {
+            this.clientName = clientName;
             return this;
         }
 

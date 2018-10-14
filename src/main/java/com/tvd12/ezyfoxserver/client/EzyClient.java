@@ -26,6 +26,8 @@ public interface EzyClient extends
 
     void disconnect();
 
+    String getName();
+
     EzyClientConfig getConfig();
 
     EzyZone getZone();

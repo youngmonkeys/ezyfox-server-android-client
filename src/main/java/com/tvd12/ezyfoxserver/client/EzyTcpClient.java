@@ -39,6 +39,7 @@ public class EzyTcpClient
 
     private EzyUser me;
     private EzyZone zone;
+    private final String name;
     private final String zoneName;
     private final EzyClientConfig config;
     private final EzyPingManager pingManager;
@@ -54,6 +55,7 @@ public class EzyTcpClient
 
     public EzyTcpClient(EzyClientConfig config) {
         this.config = config;
+        this.name = config.getClientName();
         this.zoneName = config.getZoneName();
         this.status = EzyConnectionStatus.NULL;
         this.statusLock = new Object();
@@ -145,6 +147,11 @@ public class EzyTcpClient
     public <T> T get(Class<T> key) {
         T instance = getProperty(key);
         return instance;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
