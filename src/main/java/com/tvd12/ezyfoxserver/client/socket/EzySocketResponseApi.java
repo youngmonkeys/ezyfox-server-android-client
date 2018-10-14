@@ -13,7 +13,8 @@ public class EzySocketResponseApi extends EzyAbstractResponseApi {
 
 	@Override
 	protected Object encodeData(EzyArray data) throws Exception {
-		return encoder.encode(data);
+		Object answer = encoder.encode(data);
+		return answer;
 	}
 	
 }

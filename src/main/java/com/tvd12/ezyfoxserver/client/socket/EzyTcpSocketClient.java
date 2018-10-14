@@ -177,19 +177,26 @@ public class EzyTcpSocketClient
             socketChannel.configureBlocking(false);
             socketReader.setSocketChannel(socketChannel);
             dataHandler.setSocketChannel(socketChannel);
-            dataHandler.setDisconnected(true);
+            dataHandler.setDisconnected(false);
             event = new EzyConnectionSuccessEvent();
             success = true;
             reconnectCount = 0;
         }
-        catch (UnknownHostException e) {
-            event = EzyConnectionFailureEvent.unknownHost();
-        }
-        catch (ConnectException e) {
-            event = EzyConnectionFailureEvent.connectionRefused();
-        }
         catch (Exception e) {
-            event = EzyConnectionFailureEvent.unknown();
+            if(e instanceof ConnectException) {
+                ConnectException c = (ConnectException)e;
+                if("Network is unreachable".equalsIgnoreCase(c.getMessage()))
+                    event = EzyConnectionFailureEvent.networkUnreachable();
+                else
+                    event = EzyConnectionFailureEvent.connectionRefused();
+            }
+            else if(e instanceof  UnknownHostException) {
+                event = EzyConnectionFailureEvent.unknownHost();
+            }
+            else {
+                event = EzyConnectionFailureEvent.unknown();
+            }
+            Log.w("ezyfox-client", "connect to: " + socketAddress + " error", e);
         }
         EzySocketEvent socketEvent = new EzySimpleSocketEvent(EzySocketEventType.EVENT, event);
         dataHandler.fireSocketEvent(socketEvent);
@@ -282,6 +289,7 @@ public class EzyTcpSocketClient
                     handleConnect(sleepTime);
                 }
             });
+            thread.setName("socket-connection");
         }
 
         private void handleConnect(long sleepTime) {

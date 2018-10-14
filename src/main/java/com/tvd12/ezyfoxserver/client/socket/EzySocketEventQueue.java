@@ -10,9 +10,9 @@ public interface EzySocketEventQueue {
 	
 	boolean isEmpty();
 	
-	boolean add(EzySocketEvent request);
+	boolean add(EzySocketEvent event);
 	
-	void remove(EzySocketEvent request);
+	void remove(EzySocketEvent event);
 
 	EzySocketEvent take() throws InterruptedException;
 	
