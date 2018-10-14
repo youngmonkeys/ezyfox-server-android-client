@@ -3,12 +3,18 @@ package com.tvd12.ezyfoxserver.client.manager;
 import com.tvd12.ezyfoxserver.client.EzyClient;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
+import com.tvd12.ezyfoxserver.client.event.EzyEventType;
+import com.tvd12.ezyfoxserver.client.handler.EzyAccessAppHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyAppDataHandlers;
 import com.tvd12.ezyfoxserver.client.handler.EzyAppResponseHandler;
+import com.tvd12.ezyfoxserver.client.handler.EzyConnectionFailureHandler;
+import com.tvd12.ezyfoxserver.client.handler.EzyConnectionSuccessHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandlers;
+import com.tvd12.ezyfoxserver.client.handler.EzyDisconnectionHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandlers;
+import com.tvd12.ezyfoxserver.client.handler.EzyLoginSuccessHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyPongHandler;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 
@@ -37,12 +43,17 @@ public class EzySimpleHandlerManager implements EzyHandlerManager {
 
     private EzyEventHandlers newEventHandlers() {
         EzyEventHandlers handlers = new EzyEventHandlers(client, pingSchedule);
+        handlers.addHandler(EzyEventType.CONNECTION_SUCCESS, new EzyConnectionSuccessHandler());
+        handlers.addHandler(EzyEventType.CONNECTION_FAILURE, new EzyConnectionFailureHandler());
+        handlers.addHandler(EzyEventType.DISCONNECTION, new EzyDisconnectionHandler());
         return handlers;
     }
 
     private EzyDataHandlers newDataHandlers() {
         EzyDataHandlers handlers = new EzyDataHandlers(client, pingSchedule);
         handlers.addHandler(EzyCommand.PONG, new EzyPongHandler());
+        handlers.addHandler(EzyCommand.LOGIN, new EzyLoginSuccessHandler());
+        handlers.addHandler(EzyCommand.APP_ACCESS, new EzyAccessAppHandler());
         handlers.addHandler(EzyCommand.APP_REQUEST, new EzyAppResponseHandler());
         return handlers;
     }

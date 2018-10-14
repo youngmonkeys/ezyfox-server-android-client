@@ -31,15 +31,33 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
         client.send(request);
     }
 
-    protected EzyRequest newHandshakeRequest() {
+    protected final EzyRequest newHandshakeRequest() {
         EzyHandshakeRequest request = new EzyHandshakeRequest(
-                UUID.randomUUID().toString(),
-                "",
+                getClientId(),
+                getClientKey(),
                 "ANDROID",
                 "1.0.0",
-                false,
-                ""
+                isEnableEncryption(),
+                getStoredToken()
         );
         return request;
+    }
+
+    protected String getClientId() {
+        String id = UUID.randomUUID().toString();
+        return id;
+    }
+
+    protected String getClientKey() {
+        String key = "";
+        return key;
+    }
+
+    protected boolean isEnableEncryption() {
+        return false;
+    }
+
+    protected  String getStoredToken() {
+        return "";
     }
 }
