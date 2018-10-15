@@ -58,6 +58,7 @@ public class EzyTcpSocketClient
     protected final EzySocketDataEventHandler socketDataEventHandler;
     protected final EzySocketReadingLoopHandler socketReadingLoopHandler;
     protected final EzySocketWritingLoopHandler socketWritingLoopHandler;
+    protected final EzySocketDataEventLoopHandler socketDataEventLoopHandler;
 
     public EzyTcpSocketClient(EzyClientConfig clientConfig,
                               EzyHandlerManager handlerManager,
@@ -80,6 +81,7 @@ public class EzyTcpSocketClient
         this.socketDataEventHandler = newSocketDataEventHandler();
         this.socketReadingLoopHandler = newSocketReadingLoopHandler();
         this.socketWritingLoopHandler = newSocketWritingLoopHandler();
+        this.socketDataEventLoopHandler = newSocketDataEventLoopHandler();
         this.pingSchedule.setDataHandler(dataHandler);
         this.startComponents();
     }
@@ -88,6 +90,7 @@ public class EzyTcpSocketClient
         try {
             this.socketReadingLoopHandler.start();
             this.socketWritingLoopHandler.start();
+            this.socketDataEventLoopHandler.start();
         }
         catch (Exception e) {
             throw new IllegalStateException(e);
@@ -125,6 +128,12 @@ public class EzyTcpSocketClient
     private EzySocketWritingLoopHandler newSocketWritingLoopHandler() {
         EzySocketWritingLoopHandler handler = new EzySocketWritingLoopHandler();
         handler.setEventHandler(socketWriter);
+        return handler;
+    }
+
+    private EzySocketDataEventLoopHandler newSocketDataEventLoopHandler() {
+        EzySocketDataEventLoopHandler handler = new EzySocketDataEventLoopHandler();
+        handler.setEventHandler(socketDataEventHandler);
         return handler;
     }
 
@@ -276,13 +285,14 @@ public class EzyTcpSocketClient
     private class EzySocketThread {
 
         private final Thread thread;
-        private EzySocketDataEventHandlingLoop socketDataEventHandlingLoop;
+        private volatile boolean cancelled;
 
         public EzySocketThread() {
             this(0);
         }
 
         public EzySocketThread(final long sleepTime) {
+            this.cancelled = false;
             this.thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -296,8 +306,8 @@ public class EzyTcpSocketClient
             try {
                 Log.i("ezyfox-client", "sleeping " + sleepTime + "ms before connect to server");
                 sleepBeforeConnect(sleepTime);
-                connect0();
-                startDataEventHandlingLoop();
+                if(!cancelled)
+                    connect0();
             }
             catch (Exception e) {
                 Log.e("ezyfox-client", "start connect to server error", e);
@@ -309,19 +319,13 @@ public class EzyTcpSocketClient
                 Thread.sleep(sleepTime);
         }
 
-        private void startDataEventHandlingLoop() throws Exception {
-            socketDataEventHandlingLoop =
-                    new EzySocketDataEventHandlingLoop(socketDataEventHandler);
-            socketDataEventHandlingLoop.start();
-        }
 
         public void start() {
             thread.start();
         }
 
         public void cancel() {
-            if(socketDataEventHandlingLoop != null)
-                socketDataEventHandlingLoop.setActive(false);
+            this.cancelled = true;
         }
     }
 }

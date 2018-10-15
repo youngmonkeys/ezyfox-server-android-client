@@ -42,6 +42,8 @@ public final class EzyClients {
     }
 
     public EzyClient getClient(String name) {
+        if(name == null)
+            return null;
         if(clients.containsKey(name))
             return clients.get(name);
         throw new IllegalArgumentException("has no client with name: " + name);
