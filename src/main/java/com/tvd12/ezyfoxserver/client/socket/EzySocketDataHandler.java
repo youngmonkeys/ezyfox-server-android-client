@@ -61,7 +61,7 @@ public class EzySocketDataHandler implements EzyResettable {
         }
     }
 
-    public void fireSocketDisconnected(EzyConstant reason) {
+    public void fireSocketDisconnected(int reason) {
         if(disconnected)
             return;
         disconnected = true;

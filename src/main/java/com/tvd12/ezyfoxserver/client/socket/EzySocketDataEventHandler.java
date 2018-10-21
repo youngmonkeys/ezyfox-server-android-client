@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
-import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEventType;
@@ -90,8 +89,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
 
     private void handleDisconnection(EzyArray responseData) {
         int reasonId = responseData.get(0, int.class, 0);
-        EzyConstant disconnectReason = EzyDisconnectReason.valueOf(reasonId);
-        dataHandler.fireSocketDisconnected(disconnectReason);
+        dataHandler.fireSocketDisconnected(reasonId);
     }
 
     private void handleResponseData(final Object cmd, final EzyArray responseData) {
