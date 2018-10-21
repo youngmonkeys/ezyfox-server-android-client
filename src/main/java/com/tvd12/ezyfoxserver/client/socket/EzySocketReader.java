@@ -56,7 +56,7 @@ public class EzySocketReader
 	
 	private void closeConnection() throws Exception {
 		socketChannel.close();
-		socketDataHandler.fireSocketDisconnected(EzyDisconnectReason.UNKNOWN);
+		socketDataHandler.fireSocketDisconnected(EzyDisconnectReason.UNKNOWN.getId());
 	}
 
 	public void setSocketChannel(SocketChannel socketChannel) {

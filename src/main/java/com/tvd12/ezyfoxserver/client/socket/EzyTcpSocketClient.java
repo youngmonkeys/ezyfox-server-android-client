@@ -9,7 +9,6 @@ import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionType;
-import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionFailureEvent;
@@ -261,7 +260,7 @@ public class EzyTcpSocketClient
     }
 
     @Override
-    public void onDisconnected(EzyConstant reason) {
+    public void onDisconnected(int reason) {
         handleDisconnected();
     }
 

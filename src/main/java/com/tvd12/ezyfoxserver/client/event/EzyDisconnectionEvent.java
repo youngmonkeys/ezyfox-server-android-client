@@ -1,20 +1,18 @@
 package com.tvd12.ezyfoxserver.client.event;
 
-import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
-
 /**
  * Created by tavandung12 on 10/5/18.
  */
 
 public class EzyDisconnectionEvent implements EzyEvent {
 
-    private final EzyConstant reason;
+    private final int reason;
 
-    public EzyDisconnectionEvent(EzyConstant reason) {
+    public EzyDisconnectionEvent(int reason) {
         this.reason = reason;
     }
 
-    public EzyConstant getReason() {
+    public int getReason() {
         return reason;
     }
 

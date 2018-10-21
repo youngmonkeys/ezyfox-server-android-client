@@ -58,7 +58,7 @@ public class EzyPingSchedule {
         int lostPingCount = pingManager.increaseLostPingCount();
         int maxLostPingCount = pingManager.getMaxLostPingCount();
         if(lostPingCount >= maxLostPingCount) {
-            dataHandler.fireSocketDisconnected(EzyDisconnectReason.SERVER_NOT_RESPONDING);
+            dataHandler.fireSocketDisconnected(EzyDisconnectReason.SERVER_NOT_RESPONDING.getId());
         }
         else {
             EzyRequest request = new EzyPingRequest();
