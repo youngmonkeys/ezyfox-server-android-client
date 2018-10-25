@@ -67,5 +67,6 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
     }
 
     protected void handleReconnectSuccess(EzyData responseData) {
+        handleLoginSuccess(responseData);
     }
 }

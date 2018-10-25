@@ -169,7 +169,7 @@ public class EzyTcpSocketClient
             socketThread.cancel();
         disconnect();
         resetComponents();
-        socketThread = new EzySocketThread();
+        socketThread = new EzySocketThread(sleepTime);
         socketThread.start();
     }
 

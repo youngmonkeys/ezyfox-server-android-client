@@ -7,6 +7,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzyZone;
 import com.tvd12.ezyfoxserver.client.manager.EzyAppByIdGroup;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
+import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySender;
 import com.tvd12.ezyfoxserver.client.util.EzyInstanceFetcher;
 
@@ -41,6 +42,8 @@ public interface EzyClient extends
     void setStatus(EzyConstant status);
 
     EzyPingManager getPingManager();
+
+    EzyPingSchedule getPingSchedule();
 
     EzyHandlerManager getHandlerManager();
 
