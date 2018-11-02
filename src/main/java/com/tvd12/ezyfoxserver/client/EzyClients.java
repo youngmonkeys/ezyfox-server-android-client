@@ -43,13 +43,15 @@ public final class EzyClients {
 
     public EzyClient getClient(String name) {
         if(name == null)
-            return null;
+            throw new NullPointerException("can not get client with name: null");
         if(clients.containsKey(name))
             return clients.get(name);
-        throw new IllegalArgumentException("has no client with name: " + name);
+        return null;
     }
 
     public EzyClient getDefaultClient() {
+        if(defaultClientName == null)
+            return null;
         EzyClient client = getClient(defaultClientName);
         return client;
     }

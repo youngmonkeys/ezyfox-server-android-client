@@ -216,6 +216,11 @@ public class EzyTcpClient
     }
 
     @Override
+    public EzyPingSchedule getPingSchedule() {
+        return pingSchedule;
+    }
+
+    @Override
     public EzyHandlerManager getHandlerManager() {
         return handlerManager;
     }

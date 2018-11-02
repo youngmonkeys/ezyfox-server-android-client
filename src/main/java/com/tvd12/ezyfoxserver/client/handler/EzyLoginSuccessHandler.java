@@ -24,12 +24,22 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         EzyZone zone = newZone(data);
         ((EzyMeAware)client).setMe(user);
         ((EzyZoneAware)client).setZone(zone);
-        handleResponseAppDatas(joinedApps);
+        boolean allowReconnect = allowReconnection();
+        int appCount = joinedApps.size();
+        boolean shouldReconnect = allowReconnect && appCount > 0;
         handleResponseData(responseData);
-        if(joinedApps.isEmpty())
-            handleLoginSuccess(responseData);
-        else
+        if(shouldReconnect) {
+            handleResponseAppDatas(joinedApps);
             handleReconnectSuccess(responseData);
+        }
+        else {
+            handleLoginSuccess(responseData);
+        }
+
+    }
+
+    protected boolean allowReconnection() {
+        return false;
     }
 
     protected void handleResponseData(EzyData responseData) {
@@ -67,5 +77,6 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
     }
 
     protected void handleReconnectSuccess(EzyData responseData) {
+        handleLoginSuccess(responseData);
     }
 }
