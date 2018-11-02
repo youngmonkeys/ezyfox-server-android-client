@@ -50,6 +50,8 @@ public final class EzyClients {
     }
 
     public EzyClient getDefaultClient() {
+        if(defaultClientName == null)
+            return null;
         EzyClient client = getClient(defaultClientName);
         return client;
     }
