@@ -2,18 +2,15 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 import android.util.Log;
 
-import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
+import com.tvd12.ezyfoxserver.client.concurrent.EzyThreadList;
 import com.tvd12.ezyfoxserver.client.util.EzyDestroyable;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 import com.tvd12.ezyfoxserver.client.util.EzyStartable;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
 public abstract class EzySocketEventLoop
 		implements EzyStartable, EzyDestroyable, EzyResettable {
 
-	protected ExecutorService threadPool;
+	protected EzyThreadList threadPool;
 	protected volatile boolean active;
 	
 	protected abstract String threadName();
@@ -31,10 +28,7 @@ public abstract class EzySocketEventLoop
 	}
 	
 	private void startLoopService() {
-		Runnable task = newServiceTask();
-		int threadPoolSize = threadPoolSize();
-		for(int i = 0 ; i < threadPoolSize ; ++i)
-			threadPool.execute(task);
+		threadPool.execute();
 	}
 	
 	private Runnable newServiceTask() {
@@ -49,13 +43,8 @@ public abstract class EzySocketEventLoop
 	protected abstract void eventLoop();
 	
 	protected void initThreadPool() {
-	    this.threadPool = EzyExecutors.newFixedThreadPool(threadPoolSize(), threadName());
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				threadPool.shutdown();
-			}
-		}));
+		Runnable task = newServiceTask();
+		threadPool = new EzyThreadList(threadPoolSize(), task, threadName());
 	}
 
 	@Override
@@ -73,11 +62,9 @@ public abstract class EzySocketEventLoop
 	}
 	
 	protected void destroy0() throws Exception {
-		setActive(false);
-		if(threadPool != null) {
-		    List<Runnable> remainTasks = threadPool.shutdownNow();
-		    Log.i("ezyfox-client", getClass().getSimpleName() + " stopped. Never commenced execution task: " + remainTasks.size());
-		}
+		this.active = false;
+		threadPool = null;
+		Log.i("ezyfox-client", getClass().getSimpleName() + " stopped");
 	}
 	
 }
