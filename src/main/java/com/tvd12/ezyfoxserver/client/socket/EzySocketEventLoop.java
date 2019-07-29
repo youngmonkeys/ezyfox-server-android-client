@@ -33,7 +33,7 @@ public abstract class EzySocketEventLoop
 	private void startLoopService() {
 		Runnable task = newServiceTask();
 		int threadPoolSize = threadPoolSize();
-		for(int i = 0 ; i < threadPoolSize ; i++)
+		for(int i = 0 ; i < threadPoolSize ; ++i)
 			threadPool.execute(task);
 	}
 	

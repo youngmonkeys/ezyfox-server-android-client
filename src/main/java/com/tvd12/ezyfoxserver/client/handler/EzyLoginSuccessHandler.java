@@ -48,7 +48,7 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
     protected void handleResponseAppDatas(EzyArray appDatas) {
         EzyDataHandler appAccessHandler =
                 handlerManager.getDataHandler(EzyCommand.APP_ACCESS);
-        for(int i = 0 ; i < appDatas.size() ; i++) {
+        for(int i = 0 ; i < appDatas.size() ; ++i) {
             EzyArray appData = appDatas.get(i, EzyArray.class);
             EzyArray accessAppData = newAccessAppData(appData);
             appAccessHandler.handle(accessAppData);
