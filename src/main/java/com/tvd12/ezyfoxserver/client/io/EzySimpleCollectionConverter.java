@@ -13,8 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EzySimpleCollectionConverter implements EzyCollectionConverter {
-
-	private final Map<Class, EzyToObject> converters = defaultConverters();
+	private static final long serialVersionUID = -6609590648831856878L;
+	
+	protected final EzyOutputTransformer outputTransformer;
+	protected final Map<Class, EzyToObject> converters = defaultConverters();
+	
+	public EzySimpleCollectionConverter(EzyOutputTransformer outputTransformer) {
+		this.outputTransformer = outputTransformer;
+	}
 	
 	@Override
 	public <T> T toArray(Collection coll, Class type) {
@@ -22,13 +28,19 @@ public class EzySimpleCollectionConverter implements EzyCollectionConverter {
 	}
 	
 	protected <T> T convert(Object value, Class type) {
-		if(converters.containsKey(type))
-			return (T) converters.get(type).transform(value);
-		throw new IllegalArgumentException("can not convert " + type);
+		EzyToObject converter = converters.get(type);
+		if(converter != null)
+			return (T)converter.transform(value);
+		throw new IllegalArgumentException("has no converter with: " + type);
 	}
 	
 	protected <T> T toArray(Object array, Class type) {
-		return toArray((Collection)array, type.getComponentType());
+		if(array instanceof EzyArray)
+			return toArray(((EzyArray)array).toList(), type.getComponentType());
+		if(array instanceof Collection)
+			return toArray((Collection)array, type.getComponentType());
+		Object answer = outputTransformer.transform(array, type);
+		return (T)answer;
 	}
 	
 	private <T> T[] toArray(Iterable iterable, T[] array) {
@@ -206,8 +218,9 @@ public class EzySimpleCollectionConverter implements EzyCollectionConverter {
 			}
 		});
 	}
-
-	//=============================================
+	
+	//=============
+	//=============
 	
 	private void addCustomConverters(Map<Class, EzyToObject> converters) {
 		converters.put(boolean[].class, new EzyToObject<Collection>() {

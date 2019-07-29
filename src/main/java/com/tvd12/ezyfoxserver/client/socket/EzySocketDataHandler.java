@@ -104,8 +104,8 @@ public class EzySocketDataHandler implements EzyResettable {
     }
 
     private void handleReceivedData(Object data) {
-        EzyResponse reponse = newSocketResponse(data);
-        EzySocketEvent event = new EzySimpleSocketEvent(EzySocketEventType.RESPONSE, reponse);
+        EzyResponse response = newSocketResponse(data);
+        EzySocketEvent event = new EzySimpleSocketEvent(EzySocketEventType.RESPONSE, response);
         boolean success = eventQueue.add(event);
         if(!success) {
             Log.i("ezyfox-client","response queue is full, drop incomming response");

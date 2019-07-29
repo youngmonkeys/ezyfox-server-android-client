@@ -6,7 +6,6 @@ import com.tvd12.ezyfoxserver.client.function.EzyToObject;
 import com.tvd12.ezyfoxserver.client.util.EzyDates;
 import com.tvd12.ezyfoxserver.client.util.EzyEntityBuilders;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +17,7 @@ import static com.tvd12.ezyfoxserver.client.io.EzyDataConverter.toPrimitiveByteA
 
 public class EzySimpleInputTransformer
 		extends EzyEntityBuilders
-		implements EzyInputTransformer, Serializable {
+		implements EzyInputTransformer {
 	private static final long serialVersionUID = 5436415615070699119L;
 	
 	@SuppressWarnings("rawtypes")
@@ -36,7 +35,7 @@ public class EzySimpleInputTransformer
 	}
 	
 	protected Object transformNonNullValue(Object value) {
-		return transformNonNullValue(value, getTransformers());
+		return transformNonNullValue(value, transformers);
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -69,11 +68,6 @@ public class EzySimpleInputTransformer
 	protected Object transformBuilder(
 			Object value, Map<Class, EzyToObject> transformers) {
 		return transformNonNullValue(((EzyBuilder)value).build());
-	}
-	
-	@SuppressWarnings("rawtypes")
-	protected Map<Class, EzyToObject> getTransformers() {
-		return transformers;
 	}
 	
 	@SuppressWarnings("rawtypes")

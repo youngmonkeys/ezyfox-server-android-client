@@ -8,9 +8,11 @@ import com.tvd12.ezyfoxserver.client.entity.EzyObject;
 public final class EzyEntityFactory {
 
 	private static final EzyEntityCreator CREATOR 
-			= new EzySimpleEntityCreator();
-
-	public static final EzyArray EMPTY_ARRAY = newArray();
+			= EzySimpleEntityCreator.getInstance();
+	public static final EzyArray EMPTY_ARRAY
+			= CREATOR.newArray();
+	public static final EzyObject EMPTY_OBJECT
+			= CREATOR.newObject();
 	
 	private EzyEntityFactory() {
 		// do nothing
