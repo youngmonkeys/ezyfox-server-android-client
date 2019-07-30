@@ -1,8 +1,7 @@
 package com.tvd12.ezyfoxserver.client.concurrent;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.StringUtils;
 
 import java.util.concurrent.ThreadFactory;
@@ -48,7 +47,7 @@ public class EzyThreadFactory implements ThreadFactory  {
 			trySetUpThread(thread);
 		}
 		catch(Exception e) {
-			Log.w("ezyfox-client", "can not setup thread " + thread.getName(), e);
+			EzyLogger.warn("can not setup thread " + thread.getName(), e);
 		}
 	}
 	

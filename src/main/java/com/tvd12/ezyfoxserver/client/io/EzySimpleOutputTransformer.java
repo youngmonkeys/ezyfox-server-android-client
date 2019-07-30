@@ -1,13 +1,12 @@
 package com.tvd12.ezyfoxserver.client.io;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyObject;
 import com.tvd12.ezyfoxserver.client.function.EzyToObject;
 import com.tvd12.ezyfoxserver.client.reflect.EzyClasses;
 import com.tvd12.ezyfoxserver.client.sercurity.EzyBase64;
 import com.tvd12.ezyfoxserver.client.util.EzyDates;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.util.Collection;
 import java.util.Date;
@@ -353,7 +352,7 @@ public class EzySimpleOutputTransformer implements EzyOutputTransformer {
 				try {
 					return EzyDates.parse(value);
 				} catch (Exception e) {
-					Log.w("ezyfox-client", "value = " + value + " is invalid", e);
+					EzyLogger.warn("value = " + value + " is invalid", e);
 				}
 				return null;
 			}
@@ -366,7 +365,7 @@ public class EzySimpleOutputTransformer implements EzyOutputTransformer {
 				try {
 					return EzyClasses.getClass(value);
 				} catch (Exception e) {
-					Log.w("ezyfox-client","value = " + value + " is invalid", e);
+					EzyLogger.warn("value = " + value + " is invalid", e);
 				}
 				return null;
 			}

@@ -1,9 +1,8 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.constant.EzySocketConstants;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -27,7 +26,7 @@ public class EzySocketReader
 			Thread.sleep(3L);
 		}
 		catch(Exception e) {
-			Log.i("ezyfox-client","I/O error at socket-reader: " + e.getMessage());
+			EzyLogger.info("I/O error at socket-reader: " + e.getMessage());
 		}
 	}
 	

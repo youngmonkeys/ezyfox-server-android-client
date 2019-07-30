@@ -1,9 +1,8 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.concurrent.EzyThreadList;
 import com.tvd12.ezyfoxserver.client.util.EzyDestroyable;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 import com.tvd12.ezyfoxserver.client.util.EzyStartable;
 
@@ -57,14 +56,14 @@ public abstract class EzySocketEventLoop
 		try {
 			destroy0();
 		} catch (Exception e) {
-			Log.e("ezyfox-client", "destroy socket event loop error", e);
+			EzyLogger.error("destroy socket event loop error", e);
 		}
 	}
 	
 	protected void destroy0() throws Exception {
 		this.active = false;
 		threadPool = null;
-		Log.i("ezyfox-client", getClass().getSimpleName() + " stopped");
+		EzyLogger.info(getClass().getSimpleName() + " stopped");
 	}
 	
 }

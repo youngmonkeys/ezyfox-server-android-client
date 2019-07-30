@@ -1,7 +1,5 @@
 package com.tvd12.ezyfoxserver.client;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.command.EzySetup;
 import com.tvd12.ezyfoxserver.client.command.EzySimpleSetup;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
@@ -23,6 +21,7 @@ import com.tvd12.ezyfoxserver.client.request.EzyRequest;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
 import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,7 +102,7 @@ public class EzyTcpClient
             socketClient.connect(host, port);
             setStatus(EzyConnectionStatus.CONNECTING);
         } catch (Exception e) {
-            Log.e("ezyfox-client", "connect to server error", e);
+            EzyLogger.error("connect to server error", e);
         }
     }
 

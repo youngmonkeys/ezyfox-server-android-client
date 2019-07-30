@@ -1,7 +1,6 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.codec.EzyCodecFactory;
 import com.tvd12.ezyfoxserver.client.codec.EzySimpleCodecFactory;
@@ -19,6 +18,7 @@ import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -156,7 +156,7 @@ public class EzyTcpSocketClient
         long reconnectSleepTime = getReconnectSleepTime();
         handleConnection(reconnectSleepTime);
         reconnectCount++;
-        Log.i("ezyfox-client", "try reconnect to server: " + reconnectCount + ", wating time: " + reconnectSleepTime);
+        EzyLogger.info("try reconnect to server: " + reconnectCount + ", wating time: " + reconnectSleepTime);
         EzyEvent tryConnectEvent = new EzyTryConnectEvent(reconnectCount);
         EzySocketEvent tryConnectSocketEvent
                 = new EzySimpleSocketEvent(EzySocketEventType.EVENT, tryConnectEvent);
@@ -175,7 +175,7 @@ public class EzyTcpSocketClient
 
     @Override
     protected boolean connect0() {
-        Log.i("ezyfox-client", "connecting to server");
+        EzyLogger.info("connecting to server");
         EzyEvent event = null;
         boolean success = false;
         try {
@@ -204,7 +204,7 @@ public class EzyTcpSocketClient
             else {
                 event = EzyConnectionFailureEvent.unknown();
             }
-            Log.w("ezyfox-client", "connect to: " + socketAddress + " error", e);
+            EzyLogger.warn("connect to: " + socketAddress + " error", e);
         }
         EzySocketEvent socketEvent = new EzySimpleSocketEvent(EzySocketEventType.EVENT, event);
         dataHandler.fireSocketEvent(socketEvent);
@@ -233,12 +233,12 @@ public class EzyTcpSocketClient
                 .append(data)
                 .build();
         if(!unloggableCommands.contains(cmd))
-            Log.d("ezyfox-client", "send command: " + cmd + " and data: " + data);
+            EzyLogger.debug("send command: " + cmd + " and data: " + data);
         EzyPackage pack = new EzySimplePackage(array);
         try {
             responseApi.response(pack);
         } catch (Exception e) {
-            Log.e("ezyfox-client", "send cmd: " + cmd + " with data: " + data + " error", e);
+            EzyLogger.error("send cmd: " + cmd + " with data: " + data + " error", e);
         }
     }
 
@@ -255,7 +255,7 @@ public class EzyTcpSocketClient
         try {
             socketChannel.close();
         } catch (IOException e) {
-            Log.e("ezyfox-client","close socket error", e);
+            EzyLogger.error("close socket error", e);
         }
     }
 
@@ -303,13 +303,13 @@ public class EzyTcpSocketClient
 
         private void handleConnect(long sleepTime) {
             try {
-                Log.i("ezyfox-client", "sleeping " + sleepTime + "ms before connect to server");
+                EzyLogger.info("sleeping " + sleepTime + "ms before connect to server");
                 sleepBeforeConnect(sleepTime);
                 if(!cancelled)
                     connect0();
             }
             catch (Exception e) {
-                Log.e("ezyfox-client", "start connect to server error", e);
+                EzyLogger.error("start connect to server error", e);
             }
         }
 

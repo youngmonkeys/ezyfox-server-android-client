@@ -1,7 +1,6 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
@@ -12,6 +11,7 @@ import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.util.Set;
 
@@ -53,7 +53,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
             else
                 processResponse((EzyResponse)eventData);
         } catch (InterruptedException e) {
-            Log.e("ezyfox-client", "can't take socket response", e);
+            EzyLogger.error("can't take socket response", e);
         }
     }
 
@@ -61,7 +61,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         EzyEventType eventType = event.getType();
         final EzyEventHandler handler = handlerManager.getEventHandler(eventType);
         if(handler != null) {
-            Log.i("ezyfox-client", "process event: " + eventType + " with handler: " + handler);
+            EzyLogger.info("process event: " + eventType + " with handler: " + handler);
             uihandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -70,7 +70,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
             });
         }
         else {
-            Log.w("ezyfox-client", "has no handler with event: " + eventType);
+            EzyLogger.warn( "has no handler with event: " + eventType);
         }
     }
 
@@ -80,7 +80,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         EzyArray data = response.getData();
         EzyArray responseData = data.getWithDefault(1, null);
         if(!unloggableCommands.contains(cmd))
-            Log.d("ezyfox-client", "received command: " + cmd + " and data: " + responseData);
+            EzyLogger.debug("received command: " + cmd + " and data: " + responseData);
         if(cmd == EzyCommand.DISCONNECT)
             handleDisconnection(responseData);
         else
@@ -102,7 +102,7 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
                 }
             });
         } else {
-            Log.w("ezyfox-client", "has no handler with command: " + cmd);
+            EzyLogger.warn( "has no handler with command: " + cmd);
         }
     }
 

@@ -1,11 +1,10 @@
 package com.tvd12.ezyfoxserver.client.handler;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
 import com.tvd12.ezyfoxserver.client.event.EzyConnectionFailureEvent;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 /**
  * Created by tavandung12 on 10/3/18.
@@ -15,7 +14,7 @@ public class EzyConnectionFailureHandler extends EzyAbstractEventHandler<EzyConn
 
     @Override
     public final void handle(EzyConnectionFailureEvent event) {
-        Log.i("ezyfox-client", "connection failure, reason = " + event.getReason());
+        EzyLogger.info("connection failure, reason = " + event.getReason());
         EzyClientConfig config = client.getConfig();
         EzyReconnectConfig reconnectConfig = config.getReconnect();
         boolean shouldReconnect = shouldReconnect(event);

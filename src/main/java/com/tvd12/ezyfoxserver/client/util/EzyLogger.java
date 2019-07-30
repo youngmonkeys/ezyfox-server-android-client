@@ -8,19 +8,55 @@ import android.util.Log;
  **/
 public final class EzyLogger {
 
-    private static volatile boolean debug = true;
-    private static final String TAG = "ezyfox-client";
+    public static final String TAG = "ezyfox-client";
+    public static final byte LEVEL_DEBUG = 1;
+    public static final byte LEVEL_VERBOSE = 2;
+    public static final byte LEVEL_INFO = 3;
+    public static final byte LEVEL_WARN = 4;
+    public static final byte LEVEL_ERROR = 5;
+
+    private static byte level = LEVEL_DEBUG;
+
 
     private EzyLogger() {
     }
 
+    public static void setLevel(byte level) {
+        EzyLogger.level = level;
+    }
+
     public static void debug(String msg) {
-        if(debug)
+        if(level <= LEVEL_DEBUG)
             Log.d(TAG, msg);
     }
 
+    public static void verbose(String msg) {
+        if(level <= LEVEL_VERBOSE)
+            Log.v(TAG, msg);
+    }
+
     public static void info(String msg) {
-        if(debug)
+        if(level <= LEVEL_INFO)
             Log.i(TAG, msg);
+    }
+
+    public static void warn(String msg) {
+        if(level <= LEVEL_WARN)
+            Log.w(TAG, msg);
+    }
+
+    public static void warn(String msg, Throwable e) {
+        if(level <= LEVEL_WARN)
+            Log.w(TAG, msg, e);
+    }
+
+    public static void error(String msg) {
+        if(level <= LEVEL_ERROR)
+            Log.e(TAG, msg);
+    }
+
+    public static void error(String msg, Throwable e) {
+        if(level <= LEVEL_ERROR)
+            Log.e(TAG, msg, e);
     }
 }
