@@ -23,19 +23,24 @@ public class EzyPingSchedule {
     private final EzyPingManager pingManager;
     private EzySocketDataHandler dataHandler;
     private ScheduledFuture<?> scheduledFuture;
-    private ScheduledExecutorService scheduledExecutor;
+    private final ScheduledExecutorService scheduledExecutor;
 
     public EzyPingSchedule(EzyClient client) {
         this.client = client;
         this.pingManager = client.getPingManager();
-        this.scheduledExecutor = EzyExecutors.newSingleThreadScheduledExecutor("ping-schedule");
+        this.scheduledExecutor = newScheduledExecutor();
+
+    }
+
+    protected ScheduledExecutorService newScheduledExecutor() {
+        final ScheduledExecutorService answer = EzyExecutors.newSingleThreadScheduledExecutor("ping-schedule");
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                scheduledExecutor.shutdown();
+                answer.shutdown();
             }
         }));
-
+        return answer;
     }
 
     public void start() {
