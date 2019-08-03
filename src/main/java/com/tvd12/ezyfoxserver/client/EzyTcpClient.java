@@ -1,7 +1,5 @@
 package com.tvd12.ezyfoxserver.client;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.command.EzySetup;
 import com.tvd12.ezyfoxserver.client.command.EzySimpleSetup;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
@@ -20,9 +18,11 @@ import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimpleHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimplePingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
+import com.tvd12.ezyfoxserver.client.socket.EzyMainThreadQueue;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
 import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,21 +37,22 @@ public class EzyTcpClient
         extends EzyEntity
         implements EzyClient, EzyMeAware, EzyZoneAware {
 
-    private EzyUser me;
-    private EzyZone zone;
-    private final String name;
-    private final String zoneName;
-    private final EzyClientConfig config;
-    private final EzyPingManager pingManager;
-    private final EzyHandlerManager handlerManager;
-    private final Map<Integer, EzyApp> appsById;
+    protected EzyUser me;
+    protected EzyZone zone;
+    protected final String name;
+    protected final String zoneName;
+    protected final EzyClientConfig config;
+    protected final EzyPingManager pingManager;
+    protected final EzyHandlerManager handlerManager;
+    protected final Map<Integer, EzyApp> appsById;
 
-    private EzyConstant status;
-    private final Object statusLock;
-    private final Set<Object> unloggableCommands;
+    protected EzyConstant status;
+    protected final Object statusLock;
+    protected final Set<Object> unloggableCommands;
 
-    private final EzySocketClient socketClient;
-    private final EzyPingSchedule pingSchedule;
+    protected final EzySocketClient socketClient;
+    protected final EzyPingSchedule pingSchedule;
+    protected final EzyMainThreadQueue mainThreadQueue;
 
     public EzyTcpClient(EzyClientConfig config) {
         this.config = config;
@@ -63,33 +64,35 @@ public class EzyTcpClient
         this.pingManager = new EzySimplePingManager();
         this.appsById = new HashMap<>();
         this.pingSchedule = new EzyPingSchedule(this);
+        this.mainThreadQueue = new EzyMainThreadQueue();
         this.handlerManager = newHandlerManager();
         this.socketClient = newSocketClient();
         this.initProperties();
     }
 
-    private void initProperties() {
+    protected void initProperties() {
         this.properties.put(EzySetup.class, newSetupCommand());
     }
 
-    private EzyHandlerManager newHandlerManager() {
+    protected EzyHandlerManager newHandlerManager() {
         return new EzySimpleHandlerManager(this, pingSchedule);
     }
 
-    private Set<Object> newUnloggableCommands() {
+    protected Set<Object> newUnloggableCommands() {
         Set<Object> set = new HashSet<>();
         set.add(EzyCommand.PING);
         set.add(EzyCommand.PONG);
         return set;
     }
 
-    private EzySetup newSetupCommand() {
+    protected EzySetup newSetupCommand() {
         return new EzySimpleSetup(handlerManager);
     }
 
-    private EzySocketClient newSocketClient() {
+    protected EzySocketClient newSocketClient() {
         EzyTcpSocketClient client = new EzyTcpSocketClient(
                 config,
+                mainThreadQueue,
                 handlerManager,
                 pingManager,
                 pingSchedule, unloggableCommands);
@@ -103,7 +106,7 @@ public class EzyTcpClient
             socketClient.connect(host, port);
             setStatus(EzyConnectionStatus.CONNECTING);
         } catch (Exception e) {
-            Log.e("ezyfox-client", "connect to server error", e);
+            EzyLogger.error("connect to server error", e);
         }
     }
 
@@ -123,7 +126,7 @@ public class EzyTcpClient
         return success;
     }
 
-    private void resetComponents() {
+    protected void resetComponents() {
         this.me = null;
         this.zone = null;
     }
@@ -147,6 +150,10 @@ public class EzyTcpClient
     public <T> T get(Class<T> key) {
         T instance = getProperty(key);
         return instance;
+    }
+
+    public void processEvents() {
+        mainThreadQueue.polls();
     }
 
     @Override

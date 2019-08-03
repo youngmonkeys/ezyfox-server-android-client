@@ -1,10 +1,9 @@
 package com.tvd12.ezyfoxserver.client.handler;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.entity.EzyApp;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 /**
  * Created by tavandung12 on 9/30/18.
@@ -24,6 +23,6 @@ public class EzyAppResponseHandler extends EzyAbstractDataHandler {
         if(dataHandler != null)
             dataHandler.handle(app, responseData);
         else
-            Log.w("ezyfox-client", "app: " + app.getName() + " has no handler for command: " + cmd);
+            EzyLogger.warn("app: " + app.getName() + " has no handler for command: " + cmd);
     }
 }

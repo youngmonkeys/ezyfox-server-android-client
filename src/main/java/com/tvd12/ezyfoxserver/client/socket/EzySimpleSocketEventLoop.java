@@ -1,6 +1,6 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.util.Log;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 public abstract class EzySimpleSocketEventLoop extends EzySocketEventLoop {
 
@@ -8,9 +8,9 @@ public abstract class EzySimpleSocketEventLoop extends EzySocketEventLoop {
     protected int threadPoolSize = 1;
     
     protected final void eventLoop() {
-        Log.i("ezyfox-client",currentThreadName() + " event loop has started");
+        EzyLogger.info(currentThreadName() + " event loop has started");
         eventLoop0();
-        Log.i("ezyfox-client", currentThreadName() + " event loop has stopped");
+        EzyLogger.info(currentThreadName() + " event loop has stopped");
     }
     
     protected abstract void eventLoop0();

@@ -27,6 +27,8 @@ public interface EzyClient extends
 
     void disconnect();
 
+    void processEvents();
+
     String getName();
 
     EzyClientConfig getConfig();

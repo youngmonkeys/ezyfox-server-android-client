@@ -2,6 +2,7 @@ package com.tvd12.ezyfoxserver.client.entity;
 
 import com.tvd12.ezyfoxserver.client.io.EzyInputTransformer;
 import com.tvd12.ezyfoxserver.client.io.EzyOutputTransformer;
+import com.tvd12.ezyfoxserver.client.util.EzyObjectToMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -188,7 +189,9 @@ public class EzyHashMap extends EzyTransformable implements EzyObject {
 	 */
 	@Override
 	public Map toMap() {
-		return new HashMap<>(map);
+		EzyObjectToMap objectToMap = EzyObjectToMap.getInstance();
+		Map map = objectToMap.toMap(this);
+		return map;
 	}
 
 	/*

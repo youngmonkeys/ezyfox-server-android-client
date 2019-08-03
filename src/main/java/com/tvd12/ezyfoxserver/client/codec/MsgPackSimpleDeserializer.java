@@ -9,14 +9,14 @@ import com.tvd12.ezyfoxserver.client.io.EzyBytes;
 import com.tvd12.ezyfoxserver.client.io.EzyInts;
 import com.tvd12.ezyfoxserver.client.io.EzyLongs;
 import com.tvd12.ezyfoxserver.client.io.EzyStrings;
-import com.tvd12.ezyfoxserver.client.util.EzyLiteEntityBuilders;
+import com.tvd12.ezyfoxserver.client.util.EzyEntityBuilders;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MsgPackSimpleDeserializer
-		extends EzyLiteEntityBuilders
+		extends EzyEntityBuilders
 		implements EzyMessageDeserializer {
 
 	private MsgPackTypeParser typeParser = new MsgPackTypeParser();
@@ -302,7 +302,7 @@ public class MsgPackSimpleDeserializer
 	
 	protected EzyObject parseMap(ByteBuffer buffer, int size) {
 		EzyObjectBuilder builder = newObjectBuilder();
-		for(int i = 0 ; i < size ; i++)
+		for(int i = 0 ; i < size ; ++i)
 			builder.append(deserialize(buffer), deserialize(buffer));
 		return builder.build();
 	}
@@ -407,7 +407,7 @@ public class MsgPackSimpleDeserializer
 	
 	protected EzyArray parseArray(ByteBuffer buffer, int size) {
 		EzyArrayBuilder builder = newArrayBuilder();
-		for(int i = 0 ; i < size ; i++) 
+		for(int i = 0 ; i < size ; ++i)
 			builder.append(deserialize(buffer));
 		return builder.build();
 	}

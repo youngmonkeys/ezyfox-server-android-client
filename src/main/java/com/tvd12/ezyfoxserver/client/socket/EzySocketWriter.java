@@ -2,6 +2,8 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 import android.util.Log;
 
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+
 import java.nio.ByteBuffer;
 
 public class EzySocketWriter extends EzyAbstractSocketEventHandler {
@@ -28,10 +30,10 @@ public class EzySocketWriter extends EzyAbstractSocketEventHandler {
             	packetQueue.wakeup();
 		}
 		catch (InterruptedException e) {
-			Log.w("ezyfox-client","socket-writer thread interrupted: " + Thread.currentThread());
+			EzyLogger.warn("socket-writer thread interrupted: " + Thread.currentThread());
 		}
 		catch(Throwable throwable) {
-			Log.w("ezyfox-client","problems in socket-writer main loop, thread: " + Thread.currentThread(), throwable);
+			EzyLogger.warn("problems in socket-writer main loop, thread: " + Thread.currentThread(), throwable);
 		}
 	}
 	

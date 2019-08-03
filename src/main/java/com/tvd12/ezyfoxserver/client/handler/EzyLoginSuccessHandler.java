@@ -1,6 +1,5 @@
 package com.tvd12.ezyfoxserver.client.handler;
 
-import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.entity.EzyMeAware;
@@ -9,6 +8,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzySimpleZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 
 /**
  * Created by tavandung12 on 10/1/18.
@@ -22,41 +22,13 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         EzyData responseData = data.get(5, EzyData.class);
         EzyUser user = newUser(data);
         EzyZone zone = newZone(data);
-        ((EzyMeAware)client).setMe(user);
-        ((EzyZoneAware)client).setZone(zone);
-        boolean allowReconnect = allowReconnection();
-        int appCount = joinedApps.size();
-        boolean shouldReconnect = allowReconnect && appCount > 0;
-        handleResponseData(responseData);
-        if(shouldReconnect) {
-            handleResponseAppDatas(joinedApps);
-            handleReconnectSuccess(responseData);
-        }
-        else {
-            handleLoginSuccess(responseData);
-        }
-
+        ((EzyMeAware) client).setMe(user);
+        ((EzyZoneAware) client).setZone(zone);
+        handleLoginSuccess(joinedApps, responseData);
+        EzyLogger.debug("user: " + user + " logged in successfully");
     }
 
-    protected boolean allowReconnection() {
-        return false;
-    }
-
-    protected void handleResponseData(EzyData responseData) {
-    }
-
-    protected void handleResponseAppDatas(EzyArray appDatas) {
-        EzyDataHandler appAccessHandler =
-                handlerManager.getDataHandler(EzyCommand.APP_ACCESS);
-        for(int i = 0 ; i < appDatas.size() ; i++) {
-            EzyArray appData = appDatas.get(i, EzyArray.class);
-            EzyArray accessAppData = newAccessAppData(appData);
-            appAccessHandler.handle(accessAppData);
-        }
-    }
-
-    protected EzyArray newAccessAppData(EzyArray appData) {
-        return appData;
+    protected void handleLoginSuccess(EzyArray joinedApps, EzyData responseData) {
     }
 
     protected EzyUser newUser(EzyArray data) {
@@ -71,12 +43,5 @@ public class EzyLoginSuccessHandler extends EzyAbstractDataHandler {
         String zoneName = data.get(1, String.class);
         EzySimpleZone zone = new EzySimpleZone(client, zoneId, zoneName);
         return zone;
-    }
-
-    protected void handleLoginSuccess(EzyData responseData) {
-    }
-
-    protected void handleReconnectSuccess(EzyData responseData) {
-        handleLoginSuccess(responseData);
     }
 }

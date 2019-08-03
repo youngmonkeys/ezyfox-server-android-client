@@ -1,14 +1,12 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.util.Log;
-
 import com.tvd12.ezyfoxserver.client.callback.EzyCallback;
 import com.tvd12.ezyfoxserver.client.codec.EzyMessage;
 import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
-import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
+import com.tvd12.ezyfoxserver.client.util.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
 import java.nio.ByteBuffer;
@@ -104,11 +102,11 @@ public class EzySocketDataHandler implements EzyResettable {
     }
 
     private void handleReceivedData(Object data) {
-        EzyResponse reponse = newSocketResponse(data);
-        EzySocketEvent event = new EzySimpleSocketEvent(EzySocketEventType.RESPONSE, reponse);
+        EzyResponse response = newSocketResponse(data);
+        EzySocketEvent event = new EzySimpleSocketEvent(EzySocketEventType.RESPONSE, response);
         boolean success = eventQueue.add(event);
         if(!success) {
-            Log.i("ezyfox-client","response queue is full, drop incomming response");
+            EzyLogger.info("response queue is full, drop incomming response");
         }
     }
 

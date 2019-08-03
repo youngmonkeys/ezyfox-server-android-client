@@ -12,24 +12,26 @@ import com.tvd12.ezyfoxserver.client.function.EzySafeSupplier;
 import com.tvd12.ezyfoxserver.client.io.EzyCollectionConverter;
 import com.tvd12.ezyfoxserver.client.io.EzyInputTransformer;
 import com.tvd12.ezyfoxserver.client.io.EzyOutputTransformer;
-import com.tvd12.ezyfoxserver.client.io.EzySimpleCollectionConverter;
-import com.tvd12.ezyfoxserver.client.io.EzySimpleInputTransformer;
-import com.tvd12.ezyfoxserver.client.io.EzySimpleOutputTransformer;
+import com.tvd12.ezyfoxserver.client.io.EzySingletonCollectionConverter;
+import com.tvd12.ezyfoxserver.client.io.EzySingletonInputTransformer;
+import com.tvd12.ezyfoxserver.client.io.EzySingletonOutputTransformer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EzySimpleEntityCreator implements EzyEntityCreator {
+public final class EzySimpleEntityCreator implements EzyEntityCreator {
 
-	private static final EzyInputTransformer INPUT_TRANSFORMER
-			= new EzySimpleInputTransformer();
-	private static final EzyOutputTransformer OUTPUT_TRANSFORMER
-			= new EzySimpleOutputTransformer();
-	private static final EzyCollectionConverter COLLECTION_CONVERTER
-			= new EzySimpleCollectionConverter();
-	
 	@SuppressWarnings("rawtypes")
-	private final Map<Class, EzySafeSupplier> suppliers = defaultSuppliers();
+	private final Map<Class, EzySafeSupplier> suppliers;
+	private static final EzySimpleEntityCreator INSTANCE = new EzySimpleEntityCreator();
+	
+	private EzySimpleEntityCreator() {
+		this.suppliers = defaultSuppliers();
+	}
+	
+	public static EzySimpleEntityCreator getInstance() {
+		return INSTANCE;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -66,15 +68,15 @@ public class EzySimpleEntityCreator implements EzyEntityCreator {
 	}
 	
 	protected EzyInputTransformer getInputTransformer() {
-		return INPUT_TRANSFORMER;
+		return EzySingletonInputTransformer.getInstance();
 	}
 	
 	protected EzyOutputTransformer getOutputTransformer() {
-		return OUTPUT_TRANSFORMER;
+		return EzySingletonOutputTransformer.getInstance();
 	}
 	
 	protected EzyCollectionConverter getCollectionConverter() {
-		return COLLECTION_CONVERTER;
+		return EzySingletonCollectionConverter.getInstance();
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -83,13 +85,13 @@ public class EzySimpleEntityCreator implements EzyEntityCreator {
 		answer.put(EzyObject.class, new EzySafeSupplier() {
 			@Override
 			public Object get() {
-				return newArray();
+				return newObject();
 			}
 		});
 		answer.put(EzyArray.class, new EzySafeSupplier() {
 			@Override
 			public Object get() {
-				return newObject();
+				return newArray();
 			}
 		});
 		answer.put(EzyObjectBuilder.class, new EzySafeSupplier() {
