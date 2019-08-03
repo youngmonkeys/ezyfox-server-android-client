@@ -36,21 +36,21 @@ public class EzyTcpClient
         extends EzyEntity
         implements EzyClient, EzyMeAware, EzyZoneAware {
 
-    private EzyUser me;
-    private EzyZone zone;
-    private final String name;
-    private final String zoneName;
-    private final EzyClientConfig config;
-    private final EzyPingManager pingManager;
-    private final EzyHandlerManager handlerManager;
-    private final Map<Integer, EzyApp> appsById;
+    protected EzyUser me;
+    protected EzyZone zone;
+    protected final String name;
+    protected final String zoneName;
+    protected final EzyClientConfig config;
+    protected final EzyPingManager pingManager;
+    protected final EzyHandlerManager handlerManager;
+    protected final Map<Integer, EzyApp> appsById;
 
-    private EzyConstant status;
-    private final Object statusLock;
-    private final Set<Object> unloggableCommands;
+    protected EzyConstant status;
+    protected final Object statusLock;
+    protected final Set<Object> unloggableCommands;
 
-    private final EzySocketClient socketClient;
-    private final EzyPingSchedule pingSchedule;
+    protected final EzySocketClient socketClient;
+    protected final EzyPingSchedule pingSchedule;
 
     public EzyTcpClient(EzyClientConfig config) {
         this.config = config;
@@ -67,26 +67,26 @@ public class EzyTcpClient
         this.initProperties();
     }
 
-    private void initProperties() {
+    protected void initProperties() {
         this.properties.put(EzySetup.class, newSetupCommand());
     }
 
-    private EzyHandlerManager newHandlerManager() {
+    protected EzyHandlerManager newHandlerManager() {
         return new EzySimpleHandlerManager(this, pingSchedule);
     }
 
-    private Set<Object> newUnloggableCommands() {
+    protected Set<Object> newUnloggableCommands() {
         Set<Object> set = new HashSet<>();
         set.add(EzyCommand.PING);
         set.add(EzyCommand.PONG);
         return set;
     }
 
-    private EzySetup newSetupCommand() {
+    protected EzySetup newSetupCommand() {
         return new EzySimpleSetup(handlerManager);
     }
 
-    private EzySocketClient newSocketClient() {
+    protected EzySocketClient newSocketClient() {
         EzyTcpSocketClient client = new EzyTcpSocketClient(
                 config,
                 handlerManager,
@@ -122,7 +122,7 @@ public class EzyTcpClient
         return success;
     }
 
-    private void resetComponents() {
+    protected void resetComponents() {
         this.me = null;
         this.zone = null;
     }
