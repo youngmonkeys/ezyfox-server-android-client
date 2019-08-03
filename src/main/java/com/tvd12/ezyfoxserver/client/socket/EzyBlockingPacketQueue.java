@@ -21,7 +21,7 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 
 	@Override
 	public int size() {
-		synchronized (queue) {
+		synchronized (this) {
 			int size = queue.size();
 			return size;
 		}
@@ -29,15 +29,15 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 
 	@Override
 	public void clear() {
-		synchronized (queue) {
+		synchronized (this) {
 			empty = true;
 			queue.clear();
 		}
 	}
 
 	@Override
-	public synchronized EzyPacket take() {
-		synchronized (queue) {
+	public EzyPacket take() {
+		synchronized (this) {
 			EzyPacket packet = queue.poll();
 			processing = false;
 			empty = queue.isEmpty();
@@ -47,10 +47,10 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 	}
 
 	@Override
-	public synchronized EzyPacket peek() throws InterruptedException {
-		while(empty || processing)
-			wait();
-		synchronized (queue) {
+	public EzyPacket peek() throws InterruptedException {
+		synchronized (this) {
+			while(empty || processing)
+				wait();
 			processing = true;
 			EzyPacket packet = queue.peek();
 			return packet;
@@ -60,7 +60,7 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 
 	@Override
 	public boolean isFull() {
-		synchronized (queue) {
+		synchronized (this) {
 			int size = queue.size();
 			boolean full = size >= capacity;
 			return full;
@@ -69,15 +69,15 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 
 	@Override
 	public boolean isEmpty() {
-		synchronized (queue) {
+		synchronized (this) {
 			boolean empty = queue.isEmpty();
 			return empty;
 		}
 	}
 
 	@Override
-	public synchronized boolean add(EzyPacket packet) {
-		synchronized (queue) {
+	public boolean add(EzyPacket packet) {
+		synchronized (this) {
 			int size = queue.size();
 			if(size >= capacity)
 				return false;
