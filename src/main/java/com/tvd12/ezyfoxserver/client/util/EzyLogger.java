@@ -27,36 +27,44 @@ public final class EzyLogger {
 
     public static void debug(String msg) {
         if(level <= LEVEL_DEBUG)
-            Log.d(TAG, msg);
+            Log.d(TAG, standardizedMessage(msg));
     }
 
     public static void verbose(String msg) {
         if(level <= LEVEL_VERBOSE)
-            Log.v(TAG, msg);
+            Log.v(TAG, standardizedMessage(msg));
     }
 
     public static void info(String msg) {
         if(level <= LEVEL_INFO)
-            Log.i(TAG, msg);
+            Log.i(TAG, standardizedMessage(msg));
     }
 
     public static void warn(String msg) {
         if(level <= LEVEL_WARN)
-            Log.w(TAG, msg);
+            Log.w(TAG, standardizedMessage(msg));
     }
 
     public static void warn(String msg, Throwable e) {
         if(level <= LEVEL_WARN)
-            Log.w(TAG, msg, e);
+            Log.w(TAG, standardizedMessage(msg), e);
     }
 
     public static void error(String msg) {
         if(level <= LEVEL_ERROR)
-            Log.e(TAG, msg);
+            Log.e(TAG, standardizedMessage(msg));
     }
 
     public static void error(String msg, Throwable e) {
         if(level <= LEVEL_ERROR)
-            Log.e(TAG, msg, e);
+            Log.e(TAG, standardizedMessage(msg), e);
+    }
+
+    protected static String standardizedMessage(String message) {
+        StringBuilder builder = new StringBuilder()
+                .append(Thread.currentThread().getName())
+                .append(" | ")
+                .append(message);
+        return builder.toString();
     }
 }

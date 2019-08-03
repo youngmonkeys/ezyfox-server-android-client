@@ -3,6 +3,7 @@ package com.tvd12.ezyfoxserver.client;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public final class EzyClients {
         }
     }
 
-    public EzyClient newClient0(EzyClientConfig config) {
+    protected EzyClient newClient0(EzyClientConfig config) {
         String clientName = config.getClientName();
         EzyClient client = clients.get(clientName);
         if(client == null) {
@@ -55,7 +56,7 @@ public final class EzyClients {
         }
     }
 
-    public void addClient0(EzyClient client) {
+    protected void addClient0(EzyClient client) {
         this.clients.put(client.getName(), client);
     }
 
@@ -65,7 +66,7 @@ public final class EzyClients {
         }
     }
 
-    public EzyClient getClient0(String name) {
+    protected EzyClient getClient0(String name) {
         if(name == null)
             throw new NullPointerException("can not get client with name: null");
         EzyClient client = clients.get(name);
@@ -73,8 +74,19 @@ public final class EzyClients {
     }
 
     public EzyClient getDefaultClient() {
-        EzyClient client = getClient(defaultClientName);
-        return client;
+        synchronized (clients) {
+            if (defaultClientName == null)
+                return null;
+            EzyClient client = getClient0(defaultClientName);
+            return client;
+        }
+    }
+
+    public void getClients(List<EzyClient> cachedClients) {
+        cachedClients.clear();
+        synchronized (clients) {
+            cachedClients.addAll(clients.values());
+        }
     }
 
 }

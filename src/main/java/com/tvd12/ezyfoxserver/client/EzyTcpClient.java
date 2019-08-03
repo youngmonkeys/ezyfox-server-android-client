@@ -18,6 +18,7 @@ import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimpleHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimplePingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
+import com.tvd12.ezyfoxserver.client.socket.EzyMainThreadQueue;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
 import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
@@ -51,6 +52,7 @@ public class EzyTcpClient
 
     protected final EzySocketClient socketClient;
     protected final EzyPingSchedule pingSchedule;
+    protected final EzyMainThreadQueue mainThreadQueue;
 
     public EzyTcpClient(EzyClientConfig config) {
         this.config = config;
@@ -62,6 +64,7 @@ public class EzyTcpClient
         this.pingManager = new EzySimplePingManager();
         this.appsById = new HashMap<>();
         this.pingSchedule = new EzyPingSchedule(this);
+        this.mainThreadQueue = new EzyMainThreadQueue();
         this.handlerManager = newHandlerManager();
         this.socketClient = newSocketClient();
         this.initProperties();
@@ -89,6 +92,7 @@ public class EzyTcpClient
     protected EzySocketClient newSocketClient() {
         EzyTcpSocketClient client = new EzyTcpSocketClient(
                 config,
+                mainThreadQueue,
                 handlerManager,
                 pingManager,
                 pingSchedule, unloggableCommands);
@@ -146,6 +150,10 @@ public class EzyTcpClient
     public <T> T get(Class<T> key) {
         T instance = getProperty(key);
         return instance;
+    }
+
+    public void processEvents() {
+        mainThreadQueue.polls();
     }
 
     @Override

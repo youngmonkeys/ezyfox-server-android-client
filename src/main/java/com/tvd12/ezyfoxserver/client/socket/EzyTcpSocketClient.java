@@ -1,7 +1,5 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.os.Handler;
-
 import com.tvd12.ezyfoxserver.client.codec.EzyCodecFactory;
 import com.tvd12.ezyfoxserver.client.codec.EzySimpleCodecFactory;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
@@ -41,8 +39,8 @@ public class EzyTcpSocketClient
     protected SocketChannel socketChannel;
     protected SocketAddress socketAddress;
     protected EzySocketThread socketThread;
-    protected final Handler uihandler;
     protected final EzyReconnectConfig reconnectConfig;
+    protected final EzyMainThreadQueue mainThreadQueue;
     protected final EzyHandlerManager handlerManager;
     protected final Set<Object> unloggableCommands;
     protected final EzyCodecFactory codecFactory;
@@ -60,6 +58,7 @@ public class EzyTcpSocketClient
     protected final EzySocketDataEventLoopHandler socketDataEventLoopHandler;
 
     public EzyTcpSocketClient(EzyClientConfig clientConfig,
+                              EzyMainThreadQueue mainThreadQueue,
                               EzyHandlerManager handlerManager,
                               EzyPingManager pingManager,
                               EzyPingSchedule pingSchedule,
@@ -69,7 +68,7 @@ public class EzyTcpSocketClient
         this.pingManager = pingManager;
         this.pingSchedule = pingSchedule;
         this.unloggableCommands = unloggableCommands;
-        this.uihandler = new Handler();
+        this.mainThreadQueue = mainThreadQueue;
         this.codecFactory = new EzySimpleCodecFactory();
         this.packetQueue = new EzyBlockingPacketQueue();
         this.eventQueue = new EzyLinkedBlockingEventQueue();
@@ -111,7 +110,7 @@ public class EzyTcpSocketClient
 
     private EzySocketDataEventHandler newSocketDataEventHandler() {
         return new EzySocketDataEventHandler(
-                uihandler,
+                mainThreadQueue,
                 dataHandler,
                 pingManager,
                 handlerManager,

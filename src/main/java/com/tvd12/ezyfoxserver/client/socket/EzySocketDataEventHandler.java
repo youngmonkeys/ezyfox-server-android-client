@@ -1,7 +1,5 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.os.Handler;
-
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
@@ -21,23 +19,23 @@ import java.util.Set;
 
 public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
 
-    private final Handler uihandler;
-    private final EzySocketDataHandler dataHandler;
     private final EzyPingManager pingManager;
     private final EzyHandlerManager handlerManager;
+    private final EzySocketDataHandler dataHandler;
+    private final EzyMainThreadQueue mainThreadQueue;
     private final EzySocketEventQueue socketEventQueue;
     private final Set<Object> unloggableCommands;
 
-    public EzySocketDataEventHandler(Handler uihandler,
+    public EzySocketDataEventHandler(EzyMainThreadQueue mainThreadQueue,
                                      EzySocketDataHandler dataHandler,
                                      EzyPingManager pingManager,
                                      EzyHandlerManager handlerManager,
                                      EzySocketEventQueue socketEventQueue,
                                      Set<Object> unloggableCommands) {
-        this.uihandler = uihandler;
         this.dataHandler = dataHandler;
         this.pingManager = pingManager;
         this.handlerManager = handlerManager;
+        this.mainThreadQueue = mainThreadQueue;
         this.socketEventQueue = socketEventQueue;
         this.unloggableCommands = unloggableCommands;
     }
@@ -57,17 +55,11 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         }
     }
 
-    private void processEvent(final EzyEvent event) {
+    private void processEvent(EzyEvent event) {
         EzyEventType eventType = event.getType();
-        final EzyEventHandler handler = handlerManager.getEventHandler(eventType);
+        EzyEventHandler handler = handlerManager.getEventHandler(eventType);
         if(handler != null) {
-            EzyLogger.info("process event: " + eventType + " with handler: " + handler);
-            uihandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    handler.handle(event);
-                }
-            });
+            mainThreadQueue.add(event, handler);
         }
         else {
             EzyLogger.warn( "has no handler with event: " + eventType);
@@ -92,15 +84,10 @@ public class EzySocketDataEventHandler extends EzyAbstractSocketEventHandler {
         dataHandler.fireSocketDisconnected(reasonId);
     }
 
-    private void handleResponseData(final Object cmd, final EzyArray responseData) {
-        final EzyDataHandler handler = handlerManager.getDataHandler(cmd);
+    private void handleResponseData(Object cmd, EzyArray responseData) {
+        EzyDataHandler handler = handlerManager.getDataHandler(cmd);
         if (handler != null) {
-            uihandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    handler.handle(responseData);
-                }
-            });
+            mainThreadQueue.add(responseData, handler);
         } else {
             EzyLogger.warn( "has no handler with command: " + cmd);
         }
