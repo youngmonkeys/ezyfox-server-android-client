@@ -44,21 +44,25 @@ public class EzyPingSchedule {
     }
 
     public void start() {
-        long periodMillis = pingManager.getPingPeriod();
-        scheduledFuture = scheduledExecutor.scheduleAtFixedRate(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        sendPingRequest();
-                    }
-                },
-                periodMillis, periodMillis, TimeUnit.MILLISECONDS);
+        synchronized (this) {
+            long periodMillis = pingManager.getPingPeriod();
+            scheduledFuture = scheduledExecutor.scheduleAtFixedRate(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            sendPingRequest();
+                        }
+                    },
+                    periodMillis, periodMillis, TimeUnit.MILLISECONDS);
+        }
     }
 
     public void stop() {
-        if(scheduledFuture != null)
-            this.scheduledFuture.cancel(true);
-        this.scheduledFuture = null;
+        synchronized (this) {
+            if (scheduledFuture != null)
+                this.scheduledFuture.cancel(true);
+            this.scheduledFuture = null;
+        }
     }
 
     private void sendPingRequest() {
