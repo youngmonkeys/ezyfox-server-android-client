@@ -6,7 +6,7 @@ import android.os.Looper;
 import com.tvd12.ezyfoxserver.client.EzyClient;
 import com.tvd12.ezyfoxserver.client.EzyClients;
 import com.tvd12.ezyfoxserver.client.concurrent.EzyThreadFactory;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.util.ArrayList;
 import java.util.List;

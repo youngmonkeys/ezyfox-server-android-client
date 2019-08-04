@@ -1,4 +1,4 @@
-package com.tvd12.ezyfoxserver.client.util;
+package com.tvd12.ezyfoxserver.client.logger;
 
 import android.util.Log;
 

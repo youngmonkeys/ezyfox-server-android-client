@@ -4,7 +4,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

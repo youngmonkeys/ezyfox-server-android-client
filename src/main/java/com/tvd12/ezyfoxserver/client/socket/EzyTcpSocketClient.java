@@ -16,7 +16,7 @@ import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.io.IOException;
 import java.net.ConnectException;

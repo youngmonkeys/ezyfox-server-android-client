@@ -9,7 +9,7 @@ import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;
 import com.tvd12.ezyfoxserver.client.handler.EzyEventHandler;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.util.Set;
 

@@ -2,7 +2,7 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 import com.tvd12.ezyfoxserver.client.concurrent.EzyThreadList;
 import com.tvd12.ezyfoxserver.client.util.EzyDestroyable;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 import com.tvd12.ezyfoxserver.client.util.EzyStartable;
 

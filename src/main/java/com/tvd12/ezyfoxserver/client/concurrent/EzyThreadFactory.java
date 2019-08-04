@@ -1,7 +1,7 @@
 package com.tvd12.ezyfoxserver.client.concurrent;
 
 import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.StringUtils;
 
 import java.util.concurrent.ThreadFactory;

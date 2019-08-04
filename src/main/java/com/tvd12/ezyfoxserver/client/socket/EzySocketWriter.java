@@ -1,8 +1,6 @@
 package com.tvd12.ezyfoxserver.client.socket;
 
-import android.util.Log;
-
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.nio.ByteBuffer;
 

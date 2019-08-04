@@ -6,7 +6,7 @@ import com.tvd12.ezyfoxserver.client.function.EzyToObject;
 import com.tvd12.ezyfoxserver.client.reflect.EzyClasses;
 import com.tvd12.ezyfoxserver.client.sercurity.EzyBase64;
 import com.tvd12.ezyfoxserver.client.util.EzyDates;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.util.Collection;
 import java.util.Date;

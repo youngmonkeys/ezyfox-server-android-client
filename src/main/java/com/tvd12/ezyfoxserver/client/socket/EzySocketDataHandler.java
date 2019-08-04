@@ -6,7 +6,7 @@ import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
 import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
 import java.nio.ByteBuffer;

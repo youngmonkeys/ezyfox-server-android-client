@@ -8,7 +8,7 @@ import com.tvd12.ezyfoxserver.client.entity.EzySimpleZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 /**
  * Created by tavandung12 on 10/1/18.

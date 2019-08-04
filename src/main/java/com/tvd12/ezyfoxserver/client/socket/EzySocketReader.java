@@ -2,7 +2,7 @@ package com.tvd12.ezyfoxserver.client.socket;
 
 import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.constant.EzySocketConstants;
-import com.tvd12.ezyfoxserver.client.util.EzyLogger;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
