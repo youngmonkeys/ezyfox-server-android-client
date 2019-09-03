@@ -13,11 +13,10 @@ import com.tvd12.ezyfoxserver.client.request.EzyRequest;
  */
 
 public class EzySimpleApp extends EzyEntity implements EzyApp {
-
-    protected final EzyClient client;
-    protected final EzyZone zone;
     protected final int id;
     protected final String name;
+    protected final EzyZone zone;
+    protected final EzyClient client;
     protected final EzyAppDataHandlers dataHandlers;
 
     public EzySimpleApp(EzyZone zone, int id, String name) {
@@ -28,58 +27,45 @@ public class EzySimpleApp extends EzyEntity implements EzyApp {
         this.dataHandlers = client.getHandlerManager().getAppDataHandlers(name);
     }
 
-    @Override
     public void send(EzyRequest request) {
-        Object cmd = request.getCommand();
+        String cmd = (String) request.getCommand();
         EzyData data = request.serialize();
         send(cmd, data);
     }
 
-    @Override
-    public void send(Object cmd, EzyData data) {
+    public void send(String cmd) {
+        send(cmd, EzyEntityFactory.EMPTY_OBJECT);
+    }
+
+    public void send(String cmd, EzyData data) {
         EzyArrayBuilder commandData = EzyEntityFactory.newArrayBuilder()
                 .append(cmd)
                 .append(data);
-        EzyData requestData = EzyEntityFactory.newArrayBuilder()
+        EzyArray requestData = EzyEntityFactory.newArrayBuilder()
                 .append(id)
-                .append(commandData)
+                .append(commandData.build())
                 .build();
         client.send(EzyCommand.APP_REQUEST, requestData);
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public EzyClient getClient() {
         return client;
     }
 
-    @Override
     public EzyZone getZone() {
         return zone;
     }
 
-    @Override
-    public <T> T get(Class<T> clazz) {
-        T instance = getProperty(clazz);
-        return instance;
-    }
-
-    @Override
     public EzyAppDataHandler getDataHandler(Object cmd) {
         EzyAppDataHandler handler = dataHandlers.getHandler(cmd);
         return handler;
-    }
-
-    @Override
-    public void destroy() {
     }
 }

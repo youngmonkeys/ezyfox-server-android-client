@@ -3,6 +3,8 @@ package com.tvd12.ezyfoxserver.client.socket;
 import com.tvd12.ezyfoxserver.client.EzyClient;
 import com.tvd12.ezyfoxserver.client.concurrent.EzyExecutors;
 import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
+import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
+import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.event.EzyLostPingEvent;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyPingRequest;
@@ -19,14 +21,16 @@ import java.util.concurrent.TimeUnit;
 
 public class EzyPingSchedule {
 
-    private final EzyClient client;
-    private final EzyPingManager pingManager;
-    private EzySocketDataHandler dataHandler;
-    private ScheduledFuture<?> scheduledFuture;
-    private final ScheduledExecutorService scheduledExecutor;
+    protected final EzyClient client;
+    protected final EzyRequest request;
+    protected final EzyPingManager pingManager;
+    protected ScheduledFuture<?> scheduledFuture;
+    protected EzySocketEventQueue socketEventQueue;
+    protected final ScheduledExecutorService scheduledExecutor;
 
     public EzyPingSchedule(EzyClient client) {
         this.client = client;
+        this.request = new EzyPingRequest();
         this.pingManager = client.getPingManager();
         this.scheduledExecutor = newScheduledExecutor();
 
@@ -69,7 +73,8 @@ public class EzyPingSchedule {
         int lostPingCount = pingManager.increaseLostPingCount();
         int maxLostPingCount = pingManager.getMaxLostPingCount();
         if(lostPingCount >= maxLostPingCount) {
-            dataHandler.fireSocketDisconnected(EzyDisconnectReason.SERVER_NOT_RESPONDING.getId());
+            EzyEvent event = new EzyDisconnectionEvent(EzyDisconnectReason.SERVER_NOT_RESPONDING.getId());
+            socketEventQueue.addEvent(event);
         }
         else {
             EzyRequest request = new EzyPingRequest();
@@ -78,12 +83,11 @@ public class EzyPingSchedule {
         if(lostPingCount > 1) {
             EzyLogger.info("lost ping count: " + lostPingCount);
             EzyLostPingEvent event = new EzyLostPingEvent(lostPingCount);
-            EzySocketEvent socketEvent = new EzySimpleSocketEvent(EzySocketEventType.EVENT, event);
-            dataHandler.fireSocketEvent(socketEvent);
+            socketEventQueue.addEvent(event);
         }
     }
 
-    public void setDataHandler(EzySocketDataHandler dataHandler) {
-        this.dataHandler = dataHandler;
+    public void setSocketEventQueue(EzySocketEventQueue socketEventQueue) {
+        this.socketEventQueue = socketEventQueue;
     }
 }

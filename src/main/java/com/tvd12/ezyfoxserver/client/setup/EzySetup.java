@@ -1,4 +1,4 @@
-package com.tvd12.ezyfoxserver.client.command;
+package com.tvd12.ezyfoxserver.client.setup;
 
 import com.tvd12.ezyfoxserver.client.event.EzyEventType;
 import com.tvd12.ezyfoxserver.client.handler.EzyDataHandler;

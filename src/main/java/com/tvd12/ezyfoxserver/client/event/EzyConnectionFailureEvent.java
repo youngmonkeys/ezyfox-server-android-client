@@ -11,7 +11,7 @@ public class EzyConnectionFailureEvent implements EzyEvent {
 
     private final EzyConstant reason;
 
-    private EzyConnectionFailureEvent(EzyConstant reason) {
+    public EzyConnectionFailureEvent(EzyConstant reason) {
         this.reason = reason;
     }
 

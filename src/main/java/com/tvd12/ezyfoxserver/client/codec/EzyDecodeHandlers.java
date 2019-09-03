@@ -1,14 +1,13 @@
 package com.tvd12.ezyfoxserver.client.codec;
 
 import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
-import com.tvd12.ezyfoxserver.client.util.EzyResettable;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-public abstract class EzyDecodeHandlers implements EzyResettable {
+public abstract class EzyDecodeHandlers {
 
 	protected EzyIDecodeState state;
 	protected Map<EzyIDecodeState, EzyDecodeHandler> handlers;
@@ -28,11 +27,6 @@ public abstract class EzyDecodeHandlers implements EzyResettable {
 	
 	protected EzyIDecodeState firstState() {
 		return EzyDecodeState.PREPARE_MESSAGE;
-	}
-
-	@Override
-	public void reset() {
-		this.state = firstState();
 	}
 
 	public abstract static class Builder implements EzyBuilder<EzyDecodeHandlers> {

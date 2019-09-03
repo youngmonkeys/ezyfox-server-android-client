@@ -18,7 +18,7 @@ public class EzyAccessAppHandler extends EzyAbstractDataHandler {
         EzyAppManager appManager = zone.getAppManager();
         EzyApp app = newApp(zone, data);
         appManager.addApp(app);
-        client.addApp(app);
+        appManager.addApp(app);
         postHandle(app, data);
     }
 

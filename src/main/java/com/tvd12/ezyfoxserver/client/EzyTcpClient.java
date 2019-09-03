@@ -1,33 +1,36 @@
 package com.tvd12.ezyfoxserver.client;
 
-import com.tvd12.ezyfoxserver.client.command.EzySetup;
-import com.tvd12.ezyfoxserver.client.command.EzySimpleSetup;
+import com.tvd12.ezyfoxserver.client.setup.EzySetup;
+import com.tvd12.ezyfoxserver.client.setup.EzySimpleSetup;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
-import com.tvd12.ezyfoxserver.client.constant.EzyConstant;
 import com.tvd12.ezyfoxserver.client.entity.EzyApp;
+import com.tvd12.ezyfoxserver.client.entity.EzyArray;
 import com.tvd12.ezyfoxserver.client.entity.EzyData;
 import com.tvd12.ezyfoxserver.client.entity.EzyEntity;
 import com.tvd12.ezyfoxserver.client.entity.EzyMeAware;
 import com.tvd12.ezyfoxserver.client.entity.EzyUser;
 import com.tvd12.ezyfoxserver.client.entity.EzyZone;
 import com.tvd12.ezyfoxserver.client.entity.EzyZoneAware;
+import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
+import com.tvd12.ezyfoxserver.client.manager.EzyAppManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzyPingManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimpleHandlerManager;
 import com.tvd12.ezyfoxserver.client.manager.EzySimplePingManager;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
-import com.tvd12.ezyfoxserver.client.socket.EzyMainThreadQueue;
+import com.tvd12.ezyfoxserver.client.request.EzyRequestSerializer;
+import com.tvd12.ezyfoxserver.client.request.EzySimpleRequestSerializer;
 import com.tvd12.ezyfoxserver.client.socket.EzyPingSchedule;
 import com.tvd12.ezyfoxserver.client.socket.EzySocketClient;
 import com.tvd12.ezyfoxserver.client.socket.EzyTcpSocketClient;
-import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+
+import static com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatuses.isClientConnectable;
+import static com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatuses.isClientReconnectable;
 
 /**
  * Created by tavandung12 on 9/20/18.
@@ -40,195 +43,162 @@ public class EzyTcpClient
     protected EzyUser me;
     protected EzyZone zone;
     protected final String name;
-    protected final String zoneName;
+    protected final EzySetup settingUp;
     protected final EzyClientConfig config;
     protected final EzyPingManager pingManager;
     protected final EzyHandlerManager handlerManager;
-    protected final Map<Integer, EzyApp> appsById;
+    protected final EzyRequestSerializer requestSerializer;
 
-    protected EzyConstant status;
-    protected final Object statusLock;
+    protected EzyConnectionStatus status;
     protected final Set<Object> unloggableCommands;
 
     protected final EzySocketClient socketClient;
     protected final EzyPingSchedule pingSchedule;
-    protected final EzyMainThreadQueue mainThreadQueue;
 
     public EzyTcpClient(EzyClientConfig config) {
         this.config = config;
         this.name = config.getClientName();
-        this.zoneName = config.getZoneName();
         this.status = EzyConnectionStatus.NULL;
-        this.statusLock = new Object();
-        this.unloggableCommands = newUnloggableCommands();
         this.pingManager = new EzySimplePingManager();
-        this.appsById = new HashMap<>();
         this.pingSchedule = new EzyPingSchedule(this);
-        this.mainThreadQueue = new EzyMainThreadQueue();
-        this.handlerManager = newHandlerManager();
+        this.handlerManager = new EzySimpleHandlerManager(this);
+        this.requestSerializer = new EzySimpleRequestSerializer();
+        this.settingUp = new EzySimpleSetup(handlerManager);
+        this.unloggableCommands = newUnloggableCommands();
         this.socketClient = newSocketClient();
-        this.initProperties();
-    }
-
-    protected void initProperties() {
-        this.properties.put(EzySetup.class, newSetupCommand());
-    }
-
-    protected EzyHandlerManager newHandlerManager() {
-        return new EzySimpleHandlerManager(this, pingSchedule);
     }
 
     protected Set<Object> newUnloggableCommands() {
-        Set<Object> set = new HashSet<>();
+        Set<Object> set = new HashSet<Object>();
         set.add(EzyCommand.PING);
         set.add(EzyCommand.PONG);
         return set;
     }
 
-    protected EzySetup newSetupCommand() {
-        return new EzySimpleSetup(handlerManager);
-    }
-
     protected EzySocketClient newSocketClient() {
-        EzyTcpSocketClient client = new EzyTcpSocketClient(
-                config,
-                mainThreadQueue,
-                handlerManager,
-                pingManager,
-                pingSchedule, unloggableCommands);
+        EzyTcpSocketClient client = new EzyTcpSocketClient();
+        client.setPingSchedule(pingSchedule);
+        client.setPingManager(pingManager);
+        client.setHandlerManager(handlerManager);
+        client.setReconnectConfig(config.getReconnect());
+        client.setUnloggableCommands(unloggableCommands);
         return client;
     }
 
-    @Override
+    public EzySetup setup() {
+        return settingUp;
+    }
+
     public void connect(String host, int port) {
         try {
-            resetComponents();
-            socketClient.connect(host, port);
+            if (!isClientConnectable(status)) {
+                EzyLogger.warn("client has already connected to: " + host + ":" + port);
+                return;
+            }
+            preconnect();
+            socketClient.connectTo(host, port);
             setStatus(EzyConnectionStatus.CONNECTING);
         } catch (Exception e) {
             EzyLogger.error("connect to server error", e);
         }
     }
 
-    @Override
-    public void connect() {
-        resetComponents();
-        socketClient.connect();
-        setStatus(EzyConnectionStatus.CONNECTING);
-    }
-
-    @Override
     public boolean reconnect() {
-        resetComponents();
+        if (!isClientReconnectable(status)) {
+            String host = socketClient.getHost();
+            int port = socketClient.getPort();
+            EzyLogger.warn("client has already connected to: " + host + ":" + port);
+            return false;
+        }
+        preconnect();
         boolean success = socketClient.reconnect();
-        if(success)
+        if (success)
             setStatus(EzyConnectionStatus.RECONNECTING);
         return success;
     }
 
-    protected void resetComponents() {
+    protected void preconnect() {
         this.me = null;
         this.zone = null;
     }
 
-    @Override
-    public void disconnect() {
-        socketClient.disconnect();
-        setStatus(EzyConnectionStatus.DISCONNECTED);
+    public void disconnect(int reason) {
+        socketClient.disconnect(reason);
     }
 
-    @Override
     public void send(EzyRequest request) {
-        socketClient.send(request);
+        Object cmd = request.getCommand();
+        EzyData data = request.serialize();
+        send((EzyCommand) cmd, (EzyArray) data);
     }
 
-    @Override
-    public void send(Object cmd, EzyData data) {
-        socketClient.send(cmd, data);
-    }
-
-    public <T> T get(Class<T> key) {
-        T instance = getProperty(key);
-        return instance;
+    public void send(EzyCommand cmd, EzyArray data) {
+        EzyArray array = requestSerializer.serialize(cmd, data);
+        if (socketClient != null) {
+            socketClient.sendMessage(array);
+            printSentData(cmd, data);
+        }
     }
 
     public void processEvents() {
-        mainThreadQueue.polls();
+        socketClient.processEventMessages();
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public EzyClientConfig getConfig() {
         return config;
     }
 
-    @Override
     public EzyZone getZone() {
         return zone;
     }
 
-    @Override
     public void setZone(EzyZone zone) {
         this.zone = zone;
     }
 
-    @Override
     public EzyUser getMe() {
         return me;
     }
 
-    @Override
     public void setMe(EzyUser me) {
         this.me = me;
     }
 
-    @Override
-    public String getZoneName() {
-        return zoneName;
+    public EzyConnectionStatus getStatus() {
+        return status;
     }
 
-    @Override
-    public EzyConstant getStatus() {
-        synchronized (statusLock) {
-            return status;
-        }
+    public void setStatus(EzyConnectionStatus status) {
+        this.status = status;
     }
 
-    @Override
-    public void setStatus(EzyConstant status) {
-        synchronized (statusLock) {
-            this.status = status;
-        }
-    }
-
-    @Override
-    public void addApp(EzyApp app) {
-        appsById.put(app.getId(), app);
-    }
-
-    @Override
     public EzyApp getAppById(int appId) {
-        if(appsById.containsKey(appId))
-            return appsById.get(appId);
-        throw new IllegalArgumentException("has no app with id = " + appId);
+        if (zone != null) {
+            EzyAppManager appManager = zone.getAppManager();
+            EzyApp app = appManager.getAppById(appId);
+            return app;
+        }
+        return null;
     }
 
-    @Override
     public EzyPingManager getPingManager() {
         return pingManager;
     }
 
-    @Override
     public EzyPingSchedule getPingSchedule() {
         return pingSchedule;
     }
 
-    @Override
     public EzyHandlerManager getHandlerManager() {
         return handlerManager;
+    }
+
+    private void printSentData(EzyCommand cmd, EzyArray data) {
+        if (!unloggableCommands.contains(cmd))
+            EzyLogger.debug("send command: " + cmd + " and data: " + data);
     }
 }

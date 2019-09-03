@@ -27,15 +27,15 @@ import java.util.Map;
 
 public class EzySimpleHandlerManager implements EzyHandlerManager {
 
-    private final EzyClient client;
-    private final EzyPingSchedule pingSchedule;
-    private final EzyEventHandlers eventHandlers;
-    private final EzyDataHandlers dataHandlers;
-    private final Map<String, EzyAppDataHandlers> appDataHandlerss;
+    protected final EzyClient client;
+    protected final EzyPingSchedule pingSchedule;
+    protected final EzyEventHandlers eventHandlers;
+    protected final EzyDataHandlers dataHandlers;
+    protected final Map<String, EzyAppDataHandlers> appDataHandlerss;
 
-    public EzySimpleHandlerManager(EzyClient client, EzyPingSchedule pingSchedule) {
+    public EzySimpleHandlerManager(EzyClient client) {
         this.client = client;
-        this.pingSchedule = pingSchedule;
+        this.pingSchedule = client.getPingSchedule();
         this.eventHandlers = newEventHandlers();
         this.dataHandlers = newDataHandlers();
         this.appDataHandlerss = new HashMap<>();
@@ -56,6 +56,16 @@ public class EzySimpleHandlerManager implements EzyHandlerManager {
         handlers.addHandler(EzyCommand.APP_ACCESS, new EzyAccessAppHandler());
         handlers.addHandler(EzyCommand.APP_REQUEST, new EzyAppResponseHandler());
         return handlers;
+    }
+
+    @Override
+    public EzyEventHandlers getEventHandlers() {
+        return eventHandlers;
+    }
+
+    @Override
+    public EzyDataHandlers getDataHandlers() {
+        return dataHandlers;
     }
 
     @Override
