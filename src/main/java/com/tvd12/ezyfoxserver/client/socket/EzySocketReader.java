@@ -50,7 +50,9 @@ public abstract class EzySocketReader extends EzySocketAdapter {
 					return;
 				this.buffer.clear();
 				long bytesToRead = readSocketData();
-				if(bytesToRead < 0)
+				if(bytesToRead == 0)
+					continue;
+				else if(bytesToRead < 0)
 					return;
 				buffer.flip();
 				byte[] binary = new byte[buffer.limit()];

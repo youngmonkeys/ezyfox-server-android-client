@@ -42,8 +42,4 @@ public class EzySimpleZone implements EzyZone {
         return appManager;
     }
 
-    @Override
-    public void destroy() {
-        appManager.clear();
-    }
 }

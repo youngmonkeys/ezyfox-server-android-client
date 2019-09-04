@@ -31,7 +31,7 @@ public abstract class EzySocketWriter extends EzySocketAdapter {
 				if(packet.isReleased())
 					packetQueue.take();
 				else
-					packetQueue.wakeup();
+					packetQueue.again();
 			}
 			catch (InterruptedException e) {
 				EzyLogger.warn("socket-writer thread interrupted", e);

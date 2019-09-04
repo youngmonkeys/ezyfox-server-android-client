@@ -130,8 +130,8 @@ public abstract class EzySocketClient implements EzySocketDelegate {
 
     protected void connect1(int sleepTime) {
         long currentTime = System.currentTimeMillis();
-        int dt = (int)(currentTime - connectTime);
-        int realSleepTime = sleepTime;
+        long dt = currentTime - connectTime;
+        long realSleepTime = sleepTime;
         if (sleepTime <= 0) {
             if (dt < 2000) //delay 2000ms
                 realSleepTime = 2000 - dt;
@@ -153,7 +153,7 @@ public abstract class EzySocketClient implements EzySocketDelegate {
         }
     }
 
-    protected void sleepBeforeConnect(int sleepTime) {
+    protected void sleepBeforeConnect(long sleepTime) {
         try {
             Thread.sleep(sleepTime);
         }

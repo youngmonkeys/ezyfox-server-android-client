@@ -3,6 +3,7 @@ package com.tvd12.ezyfoxserver.client.handler;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
+import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.event.EzyDisconnectionEvent;
 import com.tvd12.ezyfoxserver.client.logger.EzyLogger;
 
@@ -21,10 +22,10 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
         boolean shouldReconnect = shouldReconnect(event);
         boolean mustReconnect = reconnectConfig.isEnable() && shouldReconnect;
         boolean reconnecting = false;
+        client.setStatus(EzyConnectionStatus.DISCONNECTED);
         if(mustReconnect)
             reconnecting = client.reconnect();
         if(!reconnecting) {
-            client.setStatus(EzyConnectionStatus.DISCONNECTED);
             control(event);
         }
     }
@@ -33,6 +34,9 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
     }
 
     protected boolean shouldReconnect(EzyDisconnectionEvent event) {
+        int reason = event.getReason();
+        if(reason == EzyDisconnectReason.ANOTHER_SESSION_LOGIN.getId())
+            return false;
         return true;
     }
 

@@ -92,7 +92,19 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 	}
 
 	@Override
+	public void again() {
+		synchronized (this) {
+			this.processing = false;
+		}
+	}
+
+	@Override
 	public void wakeup() {
-		this.processing = false;
+		synchronized (this) {
+			queue.offer(null);
+			empty = false;
+			processing = false;
+			notifyAll();
+		}
 	}
 }

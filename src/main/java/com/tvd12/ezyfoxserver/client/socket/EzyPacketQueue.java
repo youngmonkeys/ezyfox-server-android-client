@@ -16,6 +16,8 @@ public interface EzyPacketQueue {
 
 	boolean add(EzyPacket packet);
 
+	void again();
+
 	void wakeup();
 	
 }

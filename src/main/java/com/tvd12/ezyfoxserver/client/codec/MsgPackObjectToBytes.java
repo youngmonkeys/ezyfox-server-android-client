@@ -1,8 +1,5 @@
 package com.tvd12.ezyfoxserver.client.codec;
 
-import com.tvd12.ezyfoxserver.client.codec.EzyMessageSerializer;
-import com.tvd12.ezyfoxserver.client.codec.EzyObjectToBytes;
-
 public class MsgPackObjectToBytes implements EzyObjectToBytes {
 
 	private final EzyMessageSerializer serializer;
