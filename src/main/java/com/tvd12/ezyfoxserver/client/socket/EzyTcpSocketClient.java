@@ -23,7 +23,7 @@ public class EzyTcpSocketClient extends EzySocketClient {
             SocketAddress socketAddress = new InetSocketAddress(host, port);
             socket = SocketChannel.open();
             socket.connect(socketAddress);
-            socket.configureBlocking(false);
+            socket.configureBlocking(true);
             return true;
         }
         catch (Exception e) {

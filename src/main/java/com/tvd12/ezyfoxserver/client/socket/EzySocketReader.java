@@ -45,14 +45,12 @@ public abstract class EzySocketReader extends EzySocketAdapter {
 	protected void update() {
 		while (true) {
 			try {
-				Thread.sleep(3);
+				Thread.sleep(1);
 				if(!active)
 					return;
 				this.buffer.clear();
 				long bytesToRead = readSocketData();
-				if(bytesToRead == 0)
-					continue;
-				else if(bytesToRead < 0)
+				if(bytesToRead <= 0)
 					return;
 				buffer.flip();
 				byte[] binary = new byte[buffer.limit()];
