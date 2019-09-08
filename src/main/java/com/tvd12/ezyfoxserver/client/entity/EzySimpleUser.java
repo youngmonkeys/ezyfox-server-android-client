@@ -24,7 +24,4 @@ public class EzySimpleUser implements EzyUser {
         return name;
     }
 
-    @Override
-    public void destroy() {
-    }
 }
