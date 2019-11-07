@@ -24,4 +24,13 @@ public class EzySimpleUser implements EzyUser {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("User(")
+                .append("id: ").append(id).append(", ")
+                .append("name: ").append(name)
+                .append(")")
+                .toString();
+    }
 }

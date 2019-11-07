@@ -10,7 +10,7 @@ import com.tvd12.ezyfoxserver.client.manager.EzyAppManager;
  * Created by tavandung12 on 10/2/18.
  */
 
-public class EzyAccessAppHandler extends EzyAbstractDataHandler {
+public class EzyAppAccessHandler extends EzyAbstractDataHandler {
 
     @Override
     public void handle(EzyArray data) {

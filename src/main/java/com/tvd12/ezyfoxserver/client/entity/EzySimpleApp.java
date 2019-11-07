@@ -68,4 +68,14 @@ public class EzySimpleApp extends EzyEntity implements EzyApp {
         EzyAppDataHandler handler = dataHandlers.getHandler(cmd);
         return handler;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("App(")
+                .append("id: ").append(id).append(", ")
+                .append("name: ").append(name)
+                .append(")")
+                .toString();
+    }
 }

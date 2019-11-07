@@ -10,6 +10,8 @@ public interface EzyAppByIdGroup {
 
     void addApp(EzyApp app);
 
+    EzyApp removeApp(int appId);
+
     EzyApp getAppById(int appId);
 
 }
