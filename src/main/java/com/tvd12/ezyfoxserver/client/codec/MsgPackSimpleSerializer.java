@@ -719,11 +719,11 @@ class IntSerializer extends EzyCastToByte {
 	private byte[] parsePositive(long value) {
 		if(value <= MsgPackConstant.MAX_POSITIVE_FIXINT)
 			return parsePositiveFix(value);
-		if(value < MsgPackConstant.MAX_UINT8)
+		if(value <= MsgPackConstant.MAX_UINT8)
 			return parseU8(value);
-		if(value < MsgPackConstant.MAX_BIN16_SIZE)
+		if(value <= MsgPackConstant.MAX_UINT16)
 			return parseU16(value);
-		if(value < MsgPackConstant.MAX_BIN32_SIZE)
+		if(value <= MsgPackConstant.MAX_UINT32)
 			return parseU32(value);
 		return parseU64(value);
 	}
