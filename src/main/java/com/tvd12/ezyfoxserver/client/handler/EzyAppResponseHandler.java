@@ -19,6 +19,10 @@ public class EzyAppResponseHandler extends EzyAbstractDataHandler {
         EzyData responseData = commandData.get(1, EzyData.class, null);
 
         EzyApp app = client.getAppById(appId);
+        if(app == null) {
+            EzyLogger.info("receive message when has not joined app yet");
+            return;
+        }
         EzyAppDataHandler dataHandler = app.getDataHandler(cmd);
         if(dataHandler != null)
             dataHandler.handle(app, responseData);
