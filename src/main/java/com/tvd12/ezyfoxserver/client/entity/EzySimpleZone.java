@@ -38,6 +38,11 @@ public class EzySimpleZone implements EzyZone {
     }
 
     @Override
+    public EzyApp getApp() {
+        return appManager.getApp();
+    }
+
+    @Override
     public EzyAppManager getAppManager() {
         return appManager;
     }

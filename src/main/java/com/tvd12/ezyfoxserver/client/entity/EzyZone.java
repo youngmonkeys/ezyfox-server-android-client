@@ -15,6 +15,8 @@ public interface EzyZone {
 
     EzyClient getClient();
 
+    EzyApp getApp();
+
     EzyAppManager getAppManager();
 
 }
