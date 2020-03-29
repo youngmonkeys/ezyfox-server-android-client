@@ -30,8 +30,9 @@ public class EzyBlockingPacketQueue implements EzyPacketQueue {
 	@Override
 	public void clear() {
 		synchronized (this) {
-			empty = true;
 			queue.clear();
+			empty = true;
+			processing = false;
 		}
 	}
 

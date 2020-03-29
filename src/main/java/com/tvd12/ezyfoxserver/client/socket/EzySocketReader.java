@@ -45,7 +45,6 @@ public abstract class EzySocketReader extends EzySocketAdapter {
 	protected void update() {
 		while (true) {
 			try {
-				Thread.sleep(1);
 				if(!active)
 					return;
 				this.buffer.clear();
