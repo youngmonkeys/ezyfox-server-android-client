@@ -23,13 +23,16 @@ public interface EzyClient {
     boolean reconnect();
     void send(EzyRequest request);
     void send(EzyCommand cmd, EzyArray data);
+    void disconnect();
     void disconnect(int reason);
     void processEvents();
     String getName();
     EzyClientConfig getConfig();
     EzyUser getMe();
     EzyZone getZone();
+    EzyApp getApp();
     EzyConnectionStatus getStatus();
+    boolean isConnected();
     void setStatus(EzyConnectionStatus status);
     EzyApp getAppById(int appId);
     EzyPingManager getPingManager();

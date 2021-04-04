@@ -22,7 +22,10 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
         EzyClientConfig config = client.getConfig();
         EzyReconnectConfig reconnectConfig = config.getReconnect();
         boolean shouldReconnect = shouldReconnect(event);
-        boolean mustReconnect = reconnectConfig.isEnable() && shouldReconnect;
+        boolean mustReconnect = reconnectConfig.isEnable() &&
+                event.getReason() != EzyDisconnectReason.UNAUTHORIZED.getId() &&
+                event.getReason() != EzyDisconnectReason.CLOSE.getId() &&
+                shouldReconnect;
         boolean reconnecting = false;
         client.setStatus(EzyConnectionStatus.DISCONNECTED);
         if(mustReconnect)
@@ -38,8 +41,7 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
 
     protected boolean shouldReconnect(EzyDisconnectionEvent event) {
         int reason = event.getReason();
-        if(reason == EzyDisconnectReason.ANOTHER_SESSION_LOGIN.getId() ||
-            reason == EzyDisconnectReason.AUTHENTICATION_FAILED.getId()) {
+        if(reason == EzyDisconnectReason.ANOTHER_SESSION_LOGIN.getId()) {
             return false;
         }
         return true;

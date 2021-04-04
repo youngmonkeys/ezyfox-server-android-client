@@ -1,5 +1,6 @@
 package com.tvd12.ezyfoxserver.client;
 
+import com.tvd12.ezyfoxserver.client.constant.EzyDisconnectReason;
 import com.tvd12.ezyfoxserver.client.setup.EzySetup;
 import com.tvd12.ezyfoxserver.client.setup.EzySimpleSetup;
 import com.tvd12.ezyfoxserver.client.config.EzyClientConfig;
@@ -85,10 +86,12 @@ public class EzyTcpClient
         return client;
     }
 
+    @Override
     public EzySetup setup() {
         return settingUp;
     }
 
+    @Override
     public void connect(String host, int port) {
         try {
             if (!isClientConnectable(status)) {
@@ -103,6 +106,7 @@ public class EzyTcpClient
         }
     }
 
+    @Override
     public boolean reconnect() {
         if (!isClientReconnectable(status)) {
             String host = socketClient.getHost();
@@ -122,16 +126,24 @@ public class EzyTcpClient
         this.zone = null;
     }
 
+    @Override
+    public void disconnect() {
+        disconnect(EzyDisconnectReason.CLOSE.getId());
+    }
+
+    @Override
     public void disconnect(int reason) {
         socketClient.disconnect(reason);
     }
 
+    @Override
     public void send(EzyRequest request) {
         Object cmd = request.getCommand();
         EzyData data = request.serialize();
         send((EzyCommand) cmd, (EzyArray) data);
     }
 
+    @Override
     public void send(EzyCommand cmd, EzyArray data) {
         EzyArray array = requestSerializer.serialize(cmd, data);
         if (socketClient != null) {
@@ -140,42 +152,62 @@ public class EzyTcpClient
         }
     }
 
+    @Override
     public void processEvents() {
         socketClient.processEventMessages();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public EzyClientConfig getConfig() {
         return config;
     }
 
+    @Override
     public EzyZone getZone() {
         return zone;
     }
 
+    @Override
     public void setZone(EzyZone zone) {
         this.zone = zone;
     }
 
+    @Override
     public EzyUser getMe() {
         return me;
     }
 
+    @Override
     public void setMe(EzyUser me) {
         this.me = me;
     }
 
+    @Override
     public EzyConnectionStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(EzyConnectionStatus status) {
         this.status = status;
     }
 
+    @Override
+    public boolean isConnected() {
+        return status == EzyConnectionStatus.CONNECTED;
+    }
+
+    @Override
+    public EzyApp getApp() {
+        return zone != null ? zone.getApp() : null;
+    }
+
+    @Override
     public EzyApp getAppById(int appId) {
         if (zone != null) {
             EzyAppManager appManager = zone.getAppManager();
@@ -185,14 +217,17 @@ public class EzyTcpClient
         return null;
     }
 
+    @Override
     public EzyPingManager getPingManager() {
         return pingManager;
     }
 
+    @Override
     public EzyPingSchedule getPingSchedule() {
         return pingSchedule;
     }
 
+    @Override
     public EzyHandlerManager getHandlerManager() {
         return handlerManager;
     }
