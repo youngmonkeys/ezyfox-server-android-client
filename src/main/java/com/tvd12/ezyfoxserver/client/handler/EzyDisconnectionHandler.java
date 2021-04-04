@@ -30,15 +30,18 @@ public class EzyDisconnectionHandler extends EzyAbstractEventHandler<EzyDisconne
         if(!reconnecting) {
             control(event);
         }
+        postHandle(event);
     }
 
-    protected void preHandle(EzyDisconnectionEvent event) {
-    }
+    protected void preHandle(EzyDisconnectionEvent event) { }
+    protected void postHandle(EzyDisconnectionEvent event) { }
 
     protected boolean shouldReconnect(EzyDisconnectionEvent event) {
         int reason = event.getReason();
-        if(reason == EzyDisconnectReason.ANOTHER_SESSION_LOGIN.getId())
+        if(reason == EzyDisconnectReason.ANOTHER_SESSION_LOGIN.getId() ||
+            reason == EzyDisconnectReason.AUTHENTICATION_FAILED.getId()) {
             return false;
+        }
         return true;
     }
 

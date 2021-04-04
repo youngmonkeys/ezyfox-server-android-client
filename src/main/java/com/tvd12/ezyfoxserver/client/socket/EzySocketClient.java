@@ -218,9 +218,9 @@ public abstract class EzySocketClient implements EzySocketDelegate {
     }
 
     public void processEventMessages() {
+        processReceivedMessages();
         processStatuses();
         processEvents();
-        processReceivedMessages();
     }
 
     protected void processStatuses() {

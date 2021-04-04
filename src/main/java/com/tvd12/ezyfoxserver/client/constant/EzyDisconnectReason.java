@@ -13,7 +13,8 @@ public enum EzyDisconnectReason implements EzyConstant {
     MAX_REQUEST_PER_SECOND(6),
     MAX_REQUEST_SIZE(7),
     SERVER_ERROR(8),
-	SERVER_NOT_RESPONDING(400);
+	SERVER_NOT_RESPONDING(400),
+	AUTHENTICATION_FAILED(401);
 
 	private final int id;
 	
