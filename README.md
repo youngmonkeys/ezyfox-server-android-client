@@ -5,84 +5,36 @@ android client for ezyfox server
 
 android client for ezyfox server
 
+# Documentation
+[https://youngmonkeys.org/ezyfox-android-client-sdk/](https://youngmonkeys.org/ezyfox-android-client-sdk/)
+
 # Code Example
 
 **1. Create a TCP Client**
 
-```java
-final EzyClients clients = EzyClients.getInstance();
-final EzyClient client = clients.newDefaultClient(config);
+```kotlin
+val clients = EzyClients.getInstance()
+val client = clients.newClient(config)
 ```
 
 **2. Setup the client**
 
-```java
-final EzySetup setup = client.get(EzySetup.class);
-setup.addEventHandler(EzyEventType.CONNECTION_SUCCESS, new EzyConnectionSuccessHandler() {
-    @Override
-    protected void postHandle() {
-        connectionController.handleConnectSuccessfully();
-    }
-});
-setup.addEventHandler(EzyEventType.CONNECTION_FAILURE, new EzyConnectionFailureHandler());
-setup.addEventHandler(EzyEventType.DISCONNECTION, new EzyDisconnectionHandler() {
-    @Override
-    protected void preHandle(EzyDisconnectionEvent event) {
-        connectionController.handleServerNotResponding();
-    }
-});
-setup.addDataHandler(EzyCommand.HANDSHAKE, new HandshakeHandler(loginRequest));
-setup.addDataHandler(EzyCommand.LOGIN, new EzyLoginSuccessHandler() {
-    @Override
-    protected void handleLoginSuccess(EzyData responseData) {
-        EzyRequest request = new EzyAccessAppRequest("freechat");
-        client.send(request);
-    }
-});
-setup.addDataHandler(EzyCommand.APP_ACCESS, new EzyAccessAppHandler() {
-    @Override
-    protected void postHandle(EzyApp app, EzyArray data) {
-        connectionController.handleAppAccessSuccessFully();
-    }
-});
-setup.addEventHandler(EzyEventType.LOST_PING, new EzyEventHandler<EzyLostPingEvent>() {
-    @Override
-    public void handle(EzyLostPingEvent event) {
-        connectionController.handleLostPing(event.getCount());
-    }
-});
-
-setup.addEventHandler(EzyEventType.TRY_CONNECT, new EzyEventHandler<EzyTryConnectEvent>() {
-    @Override
-    public void handle(EzyTryConnectEvent event) {
-        connectionController.handleTryConnect(event.getCount());
-    }
-});
+```kotlin
+val setup = client.setup()
+setup.addEventHandler(EzyEventType.CONNECTION_SUCCESS, ExConnectionSuccessHandler())
+setup.addEventHandler(EzyEventType.CONNECTION_FAILURE, EzyConnectionFailureHandler())
+setup.addEventHandler(EzyEventType.DISCONNECTION, ExDisconnectionHandler())
+setup.addDataHandler(EzyCommand.HANDSHAKE, ExHandshakeHandler())
+setup.addDataHandler(EzyCommand.LOGIN, ExLoginSuccessHandler())
 ```
 
 **3. Setup an application**
 
-```java
-EzyAppSetup appSetup = setup.setupApp("freechat");
-
-appSetup.addDataHandler("5", new EzyAppDataHandler<EzyObject>() {
-    @Override
-    public void handle(EzyApp app, EzyObject data) {
-        contactController.handleGetContactsResponse(data);
-    }
-});
-appSetup.addDataHandler(Commands.CHAT_SYSTEM_MESSAGE, new EzyAppDataHandler<EzyObject>() {
-    @Override
-    public void handle(EzyApp app, EzyObject data) {
-        data.put("from", "System");
-        messageController.handReceivedMessage(data);
-    }
-});
-
-appSetup.addDataHandler(Commands.CHAT_USER_MESSAGE, new EzyAppDataHandler<EzyObject>() {
-    @Override
-    public void handle(EzyApp app, EzyObject data) {
-        messageController.handReceivedMessage(data);
-    }
-});
+```kotlin
+val appSetup = setup.setupApp(APP_NAME)
+appSetup.addDataHandler(Commands.SUGGEST_CONTACTS, SuggestContactsResponseHandler())
+appSetup.addDataHandler(Commands.SEARCH_CONTACTS, SearchContactsResponseHandler())
+appSetup.addDataHandler(Commands.ADD_CONTACTS, AddContactsResponseHandler())
 ```
+# Used By
+1. [freechat](https://youngmonkeys.org/asset/freechat/)
