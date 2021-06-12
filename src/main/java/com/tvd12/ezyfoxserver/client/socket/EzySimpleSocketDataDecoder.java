@@ -21,10 +21,10 @@ public class EzySimpleSocketDataDecoder implements EzySocketDataDecoder {
 		this.queue = new LinkedList<>();
 		this.decoder = (EzyByteToObjectDecoder)decoder;
 	}
-	
+
 	@Override
-	public Object decode(EzyMessage message) throws Exception {
-		Object answer = decoder.decode(message);
+	public Object decode(EzyMessage message, byte[] encryptionKey) throws Exception {
+		Object answer = decoder.decode(message, encryptionKey);
 		return answer;
 	}
 	

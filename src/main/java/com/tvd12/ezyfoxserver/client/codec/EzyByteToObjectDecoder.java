@@ -8,5 +8,7 @@ public interface EzyByteToObjectDecoder {
 	Object decode(EzyMessage message) throws Exception;
 	
 	void decode(ByteBuffer bytes, Queue<EzyMessage> queue) throws Exception;
-	
+
+	Object decode(EzyMessage message, byte[] encryptionKey) throws Exception;
+
 }

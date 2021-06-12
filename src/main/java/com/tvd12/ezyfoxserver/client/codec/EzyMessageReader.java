@@ -7,8 +7,7 @@ public abstract class EzyMessageReader<B> {
 	private int size;
 	private byte[] content;
 	private EzyMessageHeader header;
-	private EzyMessageHeaderReader headerReader = newMessageHeaderReader(); 
-	
+
 	public EzyMessageReader() {
 		clear();
 	}
@@ -17,10 +16,6 @@ public abstract class EzyMessageReader<B> {
 	protected abstract byte readByte(B buffer);
 	protected abstract int readMessgeSize(B buffer);
 	protected abstract void readMessageContent(B buffer, byte[] content);
-	
-	protected EzyMessageHeaderReader newMessageHeaderReader() {
-		return new EzyMessageHeaderReader();
-	}
 	
 	public boolean readHeader(B buffer) {
 		int remaining = remaining(buffer);
@@ -60,7 +55,7 @@ public abstract class EzyMessageReader<B> {
 	}
 	
 	private void readHeader(byte header) {
-		this.header = headerReader.read(header);
+		this.header = EzyMessageHeaderReader.read(header);
 	}
 	
 	protected int getSizeLength() {

@@ -4,7 +4,9 @@ import com.tvd12.ezyfoxserver.client.constant.EzyConnectionStatus;
 import com.tvd12.ezyfoxserver.client.event.EzyEvent;
 import com.tvd12.ezyfoxserver.client.request.EzyHandshakeRequest;
 import com.tvd12.ezyfoxserver.client.request.EzyRequest;
+import com.tvd12.ezyfoxserver.client.sercurity.EzyKeysGenerator;
 
+import java.security.KeyPair;
 import java.util.UUID;
 
 /**
@@ -30,7 +32,7 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
     protected final EzyRequest newHandshakeRequest() {
         EzyHandshakeRequest request = new EzyHandshakeRequest(
                 getClientId(),
-                getClientKey(),
+                generateClientKey(),
                 "ANDROID",
                 "1.0.0",
                 isEnableEncryption(),
@@ -44,9 +46,18 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
         return id;
     }
 
-    protected String getClientKey() {
-        String key = "";
-        return key;
+    protected byte[] generateClientKey() {
+        if(!client.isEnableSSL()) {
+            return null;
+        }
+        KeyPair keyPair = EzyKeysGenerator.builder()
+                .build()
+                .generate();
+        byte[] publicKey = keyPair.getPublic().getEncoded();
+        byte[] privatekey = keyPair.getPrivate().getEncoded();
+        client.setPublicKey(publicKey);
+        client.setPrivateKey(privatekey);
+        return publicKey;
     }
 
     protected boolean isEnableEncryption() {

@@ -11,14 +11,14 @@ import com.tvd12.ezyfoxserver.client.factory.EzyEntityFactory;
 public class EzyHandshakeRequest implements EzyRequest {
 
     protected final String clientId;
-    protected final String clientKey;
+    protected final byte[] clientKey;
     protected final String clientType;
     protected final String clientVersion;
     protected final boolean enableEncryption;
     protected final String token;
 
     public EzyHandshakeRequest(String clientId,
-                               String clientKey,
+                               byte[] clientKey,
                                String clientType,
                                String clientVersion,
                                boolean enableEncryption, String token) {

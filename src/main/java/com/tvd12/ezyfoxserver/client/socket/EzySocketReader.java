@@ -17,6 +17,7 @@ import java.util.concurrent.SynchronousQueue;
 
 public abstract class EzySocketReader extends EzySocketAdapter {
 
+	protected byte[] sessionKey;
 	protected EzySocketDataDecoder decoder;
 	protected final int readBufferSize;
 	protected final ByteBuffer buffer;
@@ -74,12 +75,16 @@ public abstract class EzySocketReader extends EzySocketAdapter {
 
 	private void onMesssageReceived(EzyMessage message) {
 		try {
-			Object data = decoder.decode(message);
+			Object data = decoder.decode(message, sessionKey);
 			dataQueue.add((EzyArray) data);
 		}
 		catch (Exception e) {
 			EzyLogger.warn("decode error at socket-reader", e);
 		}
+	}
+
+	public void setSessionKey(byte[] sessionKey) {
+		this.sessionKey = sessionKey;
 	}
 
 	public void setDecoder(EzySocketDataDecoder decoder) {

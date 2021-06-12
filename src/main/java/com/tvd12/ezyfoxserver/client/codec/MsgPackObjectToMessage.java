@@ -8,34 +8,35 @@ public class MsgPackObjectToMessage implements EzyObjectToMessage {
 		this.objectToBytes = new MsgPackObjectToBytes(newSerializer());
 	}
 
-	private EzyMessageSerializer newSerializer() {
-		return new MsgPackSimpleSerializer();
+	protected EzyMessageSerializer newSerializer() {
+		EzyMessageSerializer serializer = new MsgPackSimpleSerializer();
+		return serializer;
 	}
-	
+
 	@Override
 	public EzyMessage convert(Object object) {
-		EzyMessage message = convert(convertObject(object));
+		EzyMessage message = packToMessage(convertToMessageContent(object), false);
 		return message;
 	}
-	
-	private byte[] convertObject(Object object) {
-		byte[] bytes = objectToBytes.convert(object);
-		return bytes;
+
+	@Override
+	public byte[] convertToMessageContent(Object object) {
+		return objectToBytes.convert(object);
 	}
-	
-	private EzyMessage convert(byte[] content) {
-		EzyMessage message = new EzySimpleMessage(newHeader(content), content, content.length);
+
+	@Override
+	public EzyMessage packToMessage(byte[] content, boolean encrypted) {
+		EzyMessage message = new EzySimpleMessage(newHeader(content, encrypted), content, content.length);
 		return message;
 	}
-	
-	private EzyMessageHeader newHeader(byte[] content) {
-		EzyMessageHeader header = new EzySimpleMessageHeader(isBigMessage(content), false, false, false);
+
+	private EzyMessageHeader newHeader(byte[] content, boolean encrypted) {
+		EzyMessageHeader header = new EzySimpleMessageHeader(isBigMessage(content), encrypted, false, false, false, false);
 		return header;
 	}
-	
+
 	private boolean isBigMessage(byte[] content) {
 		boolean answer = content.length > MsgPackConstant.MAX_SMALL_MESSAGE_SIZE;
 		return answer;
 	}
-	
 }

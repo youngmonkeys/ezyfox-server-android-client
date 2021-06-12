@@ -3,6 +3,7 @@ package com.tvd12.ezyfoxserver.client.socket;
 import com.tvd12.ezyfoxserver.client.codec.EzyCodecFactory;
 import com.tvd12.ezyfoxserver.client.codec.EzySimpleCodecFactory;
 import com.tvd12.ezyfoxserver.client.config.EzyReconnectConfig;
+import com.tvd12.ezyfoxserver.client.config.EzySocketClientConfig;
 import com.tvd12.ezyfoxserver.client.constant.EzyCommand;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionFailedReason;
 import com.tvd12.ezyfoxserver.client.constant.EzyConnectionType;
@@ -39,6 +40,9 @@ public abstract class EzySocketClient implements EzySocketDelegate {
     protected int reconnectCount;
     protected long connectTime;
     protected int disconnectReason;
+    protected long sessionId;
+    protected String sessionToken;
+    protected byte[] sessionKey;
     protected EzyReconnectConfig reconnectConfig;
     protected EzyHandlerManager handlerManager;
     protected Set<Object> unloggableCommands;
@@ -58,8 +62,8 @@ public abstract class EzySocketClient implements EzySocketDelegate {
     protected final List<EzySocketStatus> localSocketStatuses;
     protected final EzyValueStack<EzySocketStatus> socketStatuses;
 
-    public EzySocketClient() {
-        this.codecFactory = new EzySimpleCodecFactory();
+    public EzySocketClient(EzySocketClientConfig config) {
+        this.codecFactory = new EzySimpleCodecFactory(config.isEnableSSL());
         this.packetQueue = new EzyBlockingPacketQueue();
         this.socketEventQueue = new EzySocketEventQueue();
         this.responseApi = newResponseApi();
@@ -207,8 +211,8 @@ public abstract class EzySocketClient implements EzySocketDelegate {
         onDisconnected(disconnectReason = reason);
     }
 
-    public void sendMessage(EzyArray message) {
-        EzyPackage pack = new EzySimplePackage(message);
+    public void sendMessage(EzyArray message, boolean encrypted) {
+        EzyPackage pack = new EzySimplePackage(message, encrypted, sessionKey);
         try {
             responseApi.response(pack);
         }
@@ -315,6 +319,19 @@ public abstract class EzySocketClient implements EzySocketDelegate {
 
     public int getPort() {
         return this.port;
+    }
+
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    public void setSessionKey(byte[] sessionKey) {
+        this.sessionKey = sessionKey;
+        this.socketReader.setSessionKey(sessionKey);
     }
 
     public void setPingManager(EzyPingManager pingManager) {

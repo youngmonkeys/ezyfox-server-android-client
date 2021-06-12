@@ -6,15 +6,19 @@ import com.tvd12.ezyfoxserver.client.builder.EzyBuilder;
  * Created by tavandung12 on 10/11/18.
  */
 
-public class EzyClientConfig {
+public class EzyClientConfig implements EzySocketClientConfig {
 
     private final String zoneName;
     private final String clientName;
+    private final boolean enableSSL;
+    private final boolean enableDebug;
     private final EzyReconnectConfig reconnect;
 
     protected EzyClientConfig(Builder builder) {
         this.zoneName = builder.zoneName;
         this.clientName = builder.clientName;
+        this.enableSSL = builder.enableSSL;
+        this.enableDebug = builder.enableDebug;
         this.reconnect = builder.reconnectConfigBuilder.build();
     }
 
@@ -32,6 +36,15 @@ public class EzyClientConfig {
         return reconnect;
     }
 
+    @Override
+    public boolean isEnableSSL() {
+        return enableSSL;
+    }
+
+    public boolean isEnableDebug() {
+        return enableDebug;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -40,6 +53,8 @@ public class EzyClientConfig {
 
         private String zoneName;
         private String clientName;
+        private boolean enableSSL;
+        private boolean enableDebug;
         private final EzyReconnectConfig.Builder reconnectConfigBuilder;
 
         public Builder() {
@@ -53,6 +68,24 @@ public class EzyClientConfig {
 
         public Builder clientName(String clientName) {
             this.clientName = clientName;
+            return this;
+        }
+
+        public Builder enableSSL() {
+            return enableSSL(true);
+        }
+
+        public Builder enableSSL(boolean enableSSL) {
+            this.enableSSL = enableSSL;
+            return this;
+        }
+
+        public Builder enableDebug() {
+            return enableDebug(true);
+        }
+
+        public Builder enableDebug(boolean enableDebug) {
+            this.enableDebug = enableDebug;
             return this;
         }
 
