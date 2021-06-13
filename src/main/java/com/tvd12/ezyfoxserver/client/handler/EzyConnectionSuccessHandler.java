@@ -35,7 +35,7 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
                 generateClientKey(),
                 "ANDROID",
                 "1.0.0",
-                isEnableEncryption(),
+                client.isEnableSSL(),
                 getStoredToken()
         );
         return request;
@@ -54,14 +54,10 @@ public class EzyConnectionSuccessHandler extends EzyAbstractEventHandler {
                 .build()
                 .generate();
         byte[] publicKey = keyPair.getPublic().getEncoded();
-        byte[] privatekey = keyPair.getPrivate().getEncoded();
+        byte[] privateKey = keyPair.getPrivate().getEncoded();
         client.setPublicKey(publicKey);
-        client.setPrivateKey(privatekey);
+        client.setPrivateKey(privateKey);
         return publicKey;
-    }
-
-    protected boolean isEnableEncryption() {
-        return false;
     }
 
     protected  String getStoredToken() {

@@ -10,6 +10,12 @@ public final class EzyEntityObjects {
 
 	private EzyEntityObjects() {
 	}
+
+	public static EzyObject newObject(Object key, Object value) {
+		EzyObject obj = EzyEntityFactory.newObject();
+		obj.put(key, value);
+		return obj;
+	}
 	
 	public static EzyObject newObject(Map map) {
 		EzyObject obj = EzyEntityFactory.newObject();

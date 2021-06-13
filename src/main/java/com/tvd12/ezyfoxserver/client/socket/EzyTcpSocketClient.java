@@ -45,6 +45,7 @@ public class EzyTcpSocketClient extends EzySocketClient {
             else {
                 connectionFailedReason = EzyConnectionFailedReason.UNKNOWN;
             }
+            EzyLogger.warn("can not connect to: " + host + ":" + port, e);
             return false;
         }
     }

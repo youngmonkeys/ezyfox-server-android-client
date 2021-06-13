@@ -16,5 +16,6 @@ public interface EzyApp {
     void send(EzyRequest request);
     void send(String cmd);
     void send(String cmd, EzyData data);
+    void send(String cmd, EzyData data, boolean encrypted);
     EzyAppDataHandler getDataHandler(Object cmd);
 }

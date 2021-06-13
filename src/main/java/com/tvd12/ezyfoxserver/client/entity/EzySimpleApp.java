@@ -27,25 +27,34 @@ public class EzySimpleApp extends EzyEntity implements EzyApp {
         this.dataHandlers = client.getHandlerManager().getAppDataHandlers(name);
     }
 
+    @Override
     public void send(EzyRequest request) {
         String cmd = (String) request.getCommand();
         EzyData data = request.serialize();
         send(cmd, data);
     }
 
+    @Override
     public void send(String cmd) {
         send(cmd, EzyEntityFactory.EMPTY_OBJECT);
     }
 
+    @Override
     public void send(String cmd, EzyData data) {
-        EzyArrayBuilder commandData = EzyEntityFactory.newArrayBuilder()
-                .append(cmd)
-                .append(data);
-        EzyArray requestData = EzyEntityFactory.newArrayBuilder()
-                .append(id)
-                .append(commandData.build())
-                .build();
-        client.send(EzyCommand.APP_REQUEST, requestData);
+        send(cmd, data, false);
+    }
+
+    @Override
+    public void send(String cmd, EzyData data, boolean encrypted) {
+        EzyArray commandData = EzyEntityFactory.newArray();
+        commandData.add(cmd, data);
+        send(commandData, encrypted);
+    }
+
+    private void send(EzyArray request, boolean encrypted) {
+        EzyArray requestData = EzyEntityFactory.newArray();
+        requestData.add(id, request);
+        client.send(EzyCommand.APP_REQUEST, requestData, encrypted);
     }
 
     public int getId() {
