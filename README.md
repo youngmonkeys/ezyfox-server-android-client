@@ -1,4 +1,4 @@
-# ezyfox-server-android-client <img src="https://github.com/youngmonkeys/ezyfox-server/blob/master/logo.png" width="48" height="48" />
+# ezyfox-server-android-client <img src="https://github.com/youngmonkeys/ezyfox-server/blob/master/logo.png" width="64" />
 android client for ezyfox server
 
 # Synopsis
